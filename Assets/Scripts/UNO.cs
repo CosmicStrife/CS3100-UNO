@@ -88,7 +88,8 @@ public class UNO : MonoBehaviour
         {
             GameObject newCard = Instantiate(cardPrefab, new Vector3(transform.position.x, transform.position.y - yOffset, transform.position.z - zOffset), Quaternion.identity);
             newCard.name = card;
-            yOffset = yOffset + 0.1f;
+            newCard.GetComponent<Selectable>().faceUp = true;
+            yOffset = yOffset + 0.5f;
             zOffset = zOffset + 0.03f;
         }
     }
