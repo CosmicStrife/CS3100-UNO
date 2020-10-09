@@ -1,19 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
 
 public class UNO : MonoBehaviour
 {
+    // Sprite array to hold the png card images
     public Sprite[] cardFaces;
+    // Game objects for cardPrefab, CPU and Player1 hand place holders 
     public GameObject cardPrefab;
+    public GameObject CPUPos;
+    public GameObject Player1Pos;
+
+    // string lists ans string arrays used for building the deck and holding first card hands.
+    public List<string> deck;
     public static string[] color = new string[] { "Red", "Blue", "Yellow", "Green" };
     public static string[] values = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " Draw Two", " Skip", " Reverse"};
     public static string[] wilds = new string[] { " Wild", " Wild Draw Four" };
+    public List<string> CPU1 = new List<string>();
+    public List<string> Player1 = new List<string>();
+    
 
-    public List<string> deck;
     // Start is called before the first frame update
     void Start()
     {
+
+        List<string> CPUCards = CPU1;
+        List<string> Player1Cards = Player1;
         PlayCards();
         
     }
@@ -25,13 +39,9 @@ public class UNO : MonoBehaviour
     }
     public void PlayCards()
     {
-        //foreach (List<string> list in bottoms)
-        //{
-        //    list.Clear();
-        //}
-
         deck = GenerateDeck();
         Shuffle(deck);
+        UNOSort();
         UNODeal();
 
         //test the cards in the deck:
@@ -39,11 +49,9 @@ public class UNO : MonoBehaviour
         {
             print(card);
         }
-        
-
     }
 
-
+    // Build the deck by concatenating strings
     public static List<string> GenerateDeck()
     {
         List<string> newDeck = new List<string>();
@@ -66,6 +74,7 @@ public class UNO : MonoBehaviour
         return newDeck;
     }
 
+    // Shuffle the deck with a simple algorithm
     void Shuffle<T>(List<T> list)
     {
         System.Random random = new System.Random();
@@ -80,20 +89,77 @@ public class UNO : MonoBehaviour
         }
     }
 
-    void UNODeal()
+    // Take cards from shuffled deck and put them in CPU1 and Player1 list
+    void UNOSort()
     {
-        float yOffset = 0;
-        float zOffset = 0.03f;
-        foreach (string card in deck)
+        for (int i = 0; i < 7; i++)
         {
-            GameObject newCard = Instantiate(cardPrefab, new Vector3(transform.position.x, transform.position.y - yOffset, transform.position.z - zOffset), Quaternion.identity);
-            newCard.name = card;
-            newCard.GetComponent<Selectable>().faceUp = true;
-            yOffset = yOffset + 0.5f;
-            zOffset = zOffset + 0.03f;
+            CPU1.Add(deck.Last<string>());
+            deck.RemoveAt(deck.Count - 1);
+            Player1.Add(deck.Last<string>());
+            deck.RemoveAt(deck.Count - 1);
         }
     }
 
+    // Move cards from CPU1 and Player1 lists and display them using 
+    // placeholders CPUPos and Player1Pos
+    void UNODeal()
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            float xOffset = 0.03f;
+            float yOffset = 0.03f;
+            float zOffset = 0.03f;
+            foreach (string card in CPU1)
+            {
+                GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x - xOffset, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
+                newCard.name = card;
+                newCard.GetComponent<Selectable>().faceUp = false;                
+                xOffset = xOffset + 0.8f;
+                zOffset = zOffset + 0.05f;
+            }            
+        }
+        for (int i = 0; i < 7; i++)
+        {
+            float xOffset = 0.03f;
+            float yOffset = 0.03f;
+            float zOffset = 0.03f;
+            foreach (string card in Player1)
+            {
+                GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+                newCard.name = card;
+                newCard.GetComponent<Selectable>().faceUp = true;
+                xOffset = xOffset + 0.8f;
+                zOffset = zOffset + 0.05f;
+            }
+        }
+    }
+
+    // Commented test code for position of CPU1 and Player1 hands 
+    //float xOffset = 0;
+    //float yOffset = 0.03f;
+    //float zOffset = 0.03f;
+    //        foreach (string card in CPU1)
+    //        {
+    //            GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
+    //newCard.name = card;
+    //            newCard.GetComponent<Selectable>().faceUp = true;                
+    //            xOffset = xOffset + 0.5f;
+    //            zOffset = zOffset + 0.05f;
 
 
+    // UnoDeal initial function used for testing and displaying all cards from the middle down
+    //void UNODeal()
+    //{
+    //    float yOffset = 0;
+    //    float zOffset = 0.03f;
+    //    foreach (string card in deck)
+    //    {
+    //        GameObject newCard = Instantiate(cardPrefab, new Vector3(transform.position.x, transform.position.y - yOffset, transform.position.z - zOffset), Quaternion.identity);
+    //        newCard.name = card;
+    //        newCard.GetComponent<Selectable>().faceUp = true;
+    //        yOffset = yOffset + 0.5f;
+    //        zOffset = zOffset + 0.03f;
+    //    }
+    //}
 }
