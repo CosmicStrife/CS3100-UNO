@@ -56,6 +56,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Navigation.cs" />
+     <Compile Include="Assets\Scripts\UNO.cs" />
+     <Compile Include="Assets\Scripts\UpdateSprite.cs" />
+     <Compile Include="Assets\Scripts\UserInput.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.11f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
