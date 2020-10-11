@@ -26,8 +26,8 @@ public class UNO : MonoBehaviour
     void Start()
     {
 
-        List<string> CPUCards = CPU1;
-        List<string> Player1Cards = Player1;
+        //List<string> CPUCards = CPU1;
+        //List<string> Player1Cards = Player1;
         PlayCards();
     }
 
@@ -44,7 +44,19 @@ public class UNO : MonoBehaviour
         UNOInitialDeal(7);
 
         //test the cards in the deck:
-        foreach (string card in deck)
+        //foreach (string card in deck)
+        //{
+        //    print(card);
+        //}
+
+        print("The cards in CPU1: ");
+        foreach (string card in CPU1)
+        {
+            print(card);
+        }
+
+        print("The cards in Player1: ");
+        foreach (string card in Player1)
         {
             print(card);
         }
