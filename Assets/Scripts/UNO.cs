@@ -126,6 +126,7 @@ public class UNO : MonoBehaviour
                 newCard.name = card;
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
                 newCard.GetComponent<Selectable>().faceUp = false;
+                newCard.GetComponent<Selectable>().playerCard = false;
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
             }
@@ -143,6 +144,7 @@ public class UNO : MonoBehaviour
                 newCard.name = card;
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
                 newCard.GetComponent<Selectable>().faceUp = true;
+                newCard.GetComponent<Selectable>().playerCard = true;
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
             }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UserInput : MonoBehaviour
 {
+    private Selectable selectable;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,13 +36,13 @@ public class UserInput : MonoBehaviour
                     
                     Deck();
                 }
-                else if (hit.collider.CompareTag("Card"))
+                else if ((hit.collider.CompareTag("Card"))) // && (selectable.playerCard == false))
                 {
                     // clicked card
                     
                     Card();
                 }
-                else if (hit.collider.CompareTag("Player1"))
+                else if ((hit.collider.CompareTag("Card"))) // && (selectable.playerCard == true))
                 {
                     // clicked top
                     
