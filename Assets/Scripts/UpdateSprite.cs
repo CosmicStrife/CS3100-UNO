@@ -14,8 +14,14 @@ public class UpdateSprite : MonoBehaviour
     void Start()
     {
         List<string> deck = UNO.GenerateDeck();
+
+        // FindObjectOfType returns the object that matches the type
+        // and null if no object natches the type.
+        // uno variable is used to access the sprites
         uno = FindObjectOfType<UNO>();
-        int i = 0;
+
+        // Loop to match the name of the card with the stings in the deck
+        int i = 0;        
         foreach (string card in deck)
         {
             if (this.name == card)
@@ -25,6 +31,8 @@ public class UpdateSprite : MonoBehaviour
             }
             i++;
         }
+        // GetComponent returns the component of type if the game object 
+        // has one attached, null if it doesn't
         spriteRenderer = GetComponent<SpriteRenderer>();
         selectable = GetComponent<Selectable>();
     }
@@ -33,6 +41,8 @@ public class UpdateSprite : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // If the card is faced up in the selectable script
+        // then show the cards face otherwise show the card's back
         if (selectable.faceUp == true)
         {
             spriteRenderer.sprite = cardFace;
@@ -41,7 +51,5 @@ public class UpdateSprite : MonoBehaviour
         {
             spriteRenderer.sprite = cardBack;
         }
-
-
     }
 }

@@ -16,11 +16,11 @@ public class UNO : MonoBehaviour
     // string lists ans string arrays used for building the deck and holding first card hands.
     public List<string> deck;
     public static string[] color = new string[] { "Red", "Blue", "Yellow", "Green" };
-    public static string[] values = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " Draw Two", " Skip", " Reverse"};
+    public static string[] values = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " Draw Two", " Skip", " Reverse" };
     public static string[] wilds = new string[] { " Wild", " Wild Draw Four" };
     public List<string> CPU1 = new List<string>();
     public List<string> Player1 = new List<string>();
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +29,6 @@ public class UNO : MonoBehaviour
         List<string> CPUCards = CPU1;
         List<string> Player1Cards = Player1;
         PlayCards();
-        
     }
 
     // Update is called once per frame
@@ -41,8 +40,8 @@ public class UNO : MonoBehaviour
     {
         deck = GenerateDeck();
         Shuffle(deck);
-        UNOSort();
-        UNODeal();
+        Shuffle(deck);
+        UNOInitialDeal(7);
 
         //test the cards in the deck:
         foreach (string card in deck)
@@ -55,14 +54,14 @@ public class UNO : MonoBehaviour
     public static List<string> GenerateDeck()
     {
         List<string> newDeck = new List<string>();
-        foreach (string s in color)
+        foreach (string c in color)
         {
             foreach (string v in values)
             {
-                newDeck.Add(s + v);
+                newDeck.Add(c + v);
                 if (v != "0")
                 {
-                    newDeck.Add(s + v);
+                    newDeck.Add(c + v);
                 }
             }
         }
@@ -90,22 +89,21 @@ public class UNO : MonoBehaviour
     }
 
     // Take cards from shuffled deck and put them in CPU1 and Player1 list
-    void UNOSort()
+    void UNODraw(int num, List<string> list)
     {
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < num; i++)
         {
-            CPU1.Add(deck.Last<string>());
-            deck.RemoveAt(deck.Count - 1);
-            Player1.Add(deck.Last<string>());
+            list.Add(deck.Last<string>());
             deck.RemoveAt(deck.Count - 1);
         }
     }
 
     // Move cards from CPU1 and Player1 lists and display them using 
     // placeholders CPUPos and Player1Pos
-    void UNODeal()
+    void UNOInitialDeal(int num)
     {
-        for (int i = 0; i < 7; i++)
+        UNODraw(num, CPU1);
+        for (int i = 0; i < num; i++)
         {
             float xOffset = 0.03f;
             float yOffset = 0.03f;
@@ -114,12 +112,15 @@ public class UNO : MonoBehaviour
             {
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x - xOffset, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
                 newCard.name = card;
-                newCard.GetComponent<Selectable>().faceUp = false;                
+                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+                newCard.GetComponent<Selectable>().faceUp = false;
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
-            }            
+            }
         }
-        for (int i = 0; i < 7; i++)
+
+        UNODraw(num, Player1);
+        for (int i = 0; i < num; i++)
         {
             float xOffset = 0.03f;
             float yOffset = 0.03f;
@@ -128,6 +129,7 @@ public class UNO : MonoBehaviour
             {
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
                 newCard.name = card;
+                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
                 newCard.GetComponent<Selectable>().faceUp = true;
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
