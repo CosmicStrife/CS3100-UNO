@@ -48,12 +48,13 @@ public class UserInput : MonoBehaviour
                     
                     Player1();
                 }
+                /*
                 else if (hit.collider.CompareTag("Discard Pile"))
                 {
                     // clicked card
 
                     Discard_Pile();
-                }
+                }*/
                 else if (hit.collider.CompareTag("UNO Button"))
                 {
                     // clicked top
@@ -81,11 +82,11 @@ public class UserInput : MonoBehaviour
     {
         print("Clicked on Player1");
     }
-    
+    /*
     void Discard_Pile()
     {
         print("Clicked on Discard_Pile");
-    }
+    }*/
 
     void UNO_Button()
     {
