@@ -614,9 +614,11 @@ MonoBehaviour:
     type: 3}
   CPUPos: {fileID: 1414148833}
   Player1Pos: {fileID: 69783830}
+  DiscardPos: {fileID: 835282763}
   deck: []
   CPU1: []
   Player1: []
+  Discard: []
 --- !u!4 &275883291
 Transform:
   m_ObjectHideFlags: 0
