@@ -115,8 +115,8 @@ public class UNO : MonoBehaviour
     void UNOInitialDeal(int num)
     {
         UNODraw(num, CPU1);
-        for (int i = 0; i < num; i++)
-        {
+        //for (int i = 0; i < num; i++)
+        //{
             float xOffset = 0.03f;
             float yOffset = 0.03f;
             float zOffset = 0.03f;
@@ -130,14 +130,16 @@ public class UNO : MonoBehaviour
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
             }
-        }
+        //}
 
         UNODraw(num, Player1);
-        for (int i = 0; i < num; i++)
-        {
+        //for (int i = 0; i < num; i++)
+        //{
+            /*
             float xOffset = 0.03f;
             float yOffset = 0.03f;
             float zOffset = 0.03f;
+            */
             foreach (string card in Player1)
             {
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
@@ -148,7 +150,7 @@ public class UNO : MonoBehaviour
                 xOffset = xOffset + 0.8f;
                 zOffset = zOffset + 0.05f;
             }
-        }
+        //}
     }
 
     // Commented test code for position of CPU1 and Player1 hands 
