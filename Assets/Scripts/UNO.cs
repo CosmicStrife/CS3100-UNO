@@ -12,6 +12,7 @@ public class UNO : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject CPUPos;
     public GameObject Player1Pos;
+    public GameObject DiscardPos;
 
     // string lists ans string arrays used for building the deck and holding first card hands.
     public List<string> deck;
@@ -20,6 +21,7 @@ public class UNO : MonoBehaviour
     public static string[] wilds = new string[] { " Wild", " Wild Draw Four" };
     public List<string> CPU1 = new List<string>();
     public List<string> Player1 = new List<string>();
+    public List<string> Discard = new List<string>();
 
 
     // Start is called before the first frame update
@@ -43,12 +45,13 @@ public class UNO : MonoBehaviour
         Shuffle(deck);
         UNOInitialDeal(7);
 
-        //test the cards in the deck:
-        //foreach (string card in deck)
-        //{
-        //    print(card);
-        //}
-
+        /*
+        test the cards in the deck:
+        foreach (string card in deck)
+        {
+            print(card);
+        }
+        
         print("The cards in CPU1: ");
         foreach (string card in CPU1)
         {
@@ -61,7 +64,7 @@ public class UNO : MonoBehaviour
             print(card);
         }
 
-        /*
+        
         print("The cards in DECK ");
         foreach (string card in deck)
         {
@@ -120,49 +123,55 @@ public class UNO : MonoBehaviour
 
     // Move cards from CPU1 and Player1 lists and display them using 
     // placeholders CPUPos and Player1Pos
+    // Also place a card to start in the discard pile
     void UNOInitialDeal(int num)
     {
-        print("Decksize before draw" + deck.Count());
+        /* Deal cards to the CPU */
         UNODraw(num, CPU1);
-        print("Decksize after draw" + deck.Count());
+        float xOffset = 0.03f;
+        float yOffset = 0.03f;
+        float zOffset = 0.03f;
+        foreach (string card in CPU1)
+        {
+            GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x - xOffset, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
+            newCard.name = card;
+            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+            newCard.GetComponent<Selectable>().faceUp = false;
+            newCard.GetComponent<Selectable>().playerCard = false;
+            xOffset = xOffset + 0.8f;
+            zOffset = zOffset + 0.05f;
+        }
+        /* Print cards in CPU's hand
         for(int i = 0; i < CPU1.Count(); i++)
         {
             print(CPU1[i]);
         }
-        //for (int i = 0; i < num; i++)
-        //{
-            float xOffset = 0.03f;
-            float yOffset = 0.03f;
-            float zOffset = 0.03f;
-            foreach (string card in CPU1)
-            {
-                GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x - xOffset, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
-                newCard.name = card;
-                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
-                newCard.GetComponent<Selectable>().faceUp = false;
-                newCard.GetComponent<Selectable>().playerCard = false;
-                xOffset = xOffset + 0.8f;
-                zOffset = zOffset + 0.05f;
-            }
-        //}
+        */
 
+        /* Deal cards to Player1 */
         UNODraw(num, Player1);
-        //for (int i = 0; i < num; i++)
-        //{
-            xOffset = 0.03f;
-            yOffset = 0.03f;
-            zOffset = 0.03f;
-            foreach (string card in Player1)
-            {
-                GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
-                newCard.name = card;
-                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
-                newCard.GetComponent<Selectable>().faceUp = true;
-                newCard.GetComponent<Selectable>().playerCard = true;
-                xOffset = xOffset + 0.8f;
-                zOffset = zOffset + 0.05f;
-            }
-        //}
+        xOffset = 0.03f;
+        yOffset = 0.03f;
+        zOffset = 0.03f;
+        foreach (string card in Player1)
+        {
+            GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+            newCard.name = card;
+            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+            newCard.GetComponent<Selectable>().faceUp = true;
+            newCard.GetComponent<Selectable>().playerCard = true;
+            xOffset = xOffset + 1.0f;
+            zOffset = zOffset + 0.05f;
+        }
+
+        /* Deal a card to the discard pile */
+        Discard.Add(deck.Last<string>());
+        deck.RemoveAt(deck.Count - 1);
+        zOffset = 0.03f;
+        GameObject Dcard = Instantiate(cardPrefab, new Vector3(DiscardPos.transform.position.x, DiscardPos.transform.position.y, DiscardPos.transform.position.z - zOffset), Quaternion.identity, DiscardPos.transform);
+        Dcard.name = Discard[0];
+        Dcard.GetComponent<Selectable>().faceUp = true;
+        Dcard.GetComponent<Selectable>().playerCard = false;
     }
 
     // Commented test code for position of CPU1 and Player1 hands 
