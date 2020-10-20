@@ -135,11 +135,10 @@ public class UNO : MonoBehaviour
         UNODraw(num, Player1);
         //for (int i = 0; i < num; i++)
         //{
-            /*
-            float xOffset = 0.03f;
-            float yOffset = 0.03f;
-            float zOffset = 0.03f;
-            */
+            
+            xOffset = 0.03f;
+            yOffset = 0.03f;
+            zOffset = 0.03f;
             foreach (string card in Player1)
             {
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);

@@ -11,14 +11,16 @@ public class turnActionManager : MonoBehaviour
     string currPlayer;
 
     //Stores current phase of turn
-    //  +Special action: 0
-    //  +Draw: 1
-    //  +Play: 2
-    //  +End: 3
+    //  +Start: 0
+    //  +Draw/Play: 1
+    //  +End: 2
     public byte phase;
 
     //Keeps track of if UNO is called at an appropriate time
     public bool UNOcalled;
+
+    //Keeps track of if a card was drawn this turn outside of special rules
+    public bool cardDrawn;
 
     private UNO UNOsystem;
     private UserInput input;
@@ -34,14 +36,20 @@ public class turnActionManager : MonoBehaviour
         //return orderManager.turnOrder.First();
         //print(orderManager.turnOrder[0]);
         return orderManager.turnOrder[0];
+        //return "temp";
     }
 
     void turnDraw(string player, byte numCards)
     {
-        for(int i=0; i<numCards; i++)
+        int i=0;
+        while(i<numCards)
         {
             //
-            print("Card drawn by" + player);
+            if(input.deckClick)
+            {
+                print("Card drawn by" + player);
+                i++;
+            }
         }
         return;
     }
@@ -62,6 +70,7 @@ public class turnActionManager : MonoBehaviour
         currPlayer = getCurrPlayer();
         phase = 0;
         UNOcalled = false;
+        cardDrawn = false;
     }
 
     // Update is called once per frame
@@ -90,6 +99,9 @@ public class turnActionManager : MonoBehaviour
         //          +Check for signal from User Interface
         //          +Set UNOcalled = true
         //
+        
+
+        //NOTE: will probably need to be replaced. Can't track UNO calls between players
         if (/*hand.numCards(currplayer) > 1*/true)//Change once hands are made
         {
             UNOcalled = false;
@@ -108,7 +120,7 @@ public class turnActionManager : MonoBehaviour
         if(currPlayer == "CPU1")
         {
             print("  Skipping CPU turn");
-            phase = 3;
+            phase = 2;
         }
 
 
@@ -128,38 +140,78 @@ public class turnActionManager : MonoBehaviour
             //      +Send signals to UI to change display and interface
             //      +Process special actions
                 //Special Actions
-                foreach (string rule in orderManager.rules)
-                {
-                    if(rule[0] == 'd')
-                    {
-                        //Draw
-                        turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
-                    }
-                    //Insert other checks here
-                }
-
-
+                
                 if (orderManager.rules.Contains("s"))
                 {
                     phase = 3;
                 }
-                else if (turn/*No matching card in hand*/)
+                else
                 {
+                    foreach (string rule in orderManager.rules)
+                    {
+                        if(rule[0] == 'd')
+                        {
+                            //Draw
+                            turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
+                        }
+                        if(rule[0] == 'r')
+                        {
+                            orderManager.turnDirection *= (-1);
+                        }
+                    }
+                    //Insert other checks here
+
+                    phase++;
+                    print("  "+currPlayer+" draw/play phase");
+                    
+                }
+                break;
+            case 1:
+            //  Draw/Play
+            //      +Check for matching cards in hand.
+            //          -If none, require draw.
+                
+                    
                     if (input.deckClick)
                     {
                         //Move card from deck to hand
-                        phase++;
-                        print("  "+currPlayer+" play phase");
-                    }
-                }
-                break;
 
-            case 1:
+                        cardDrawn = true;
+                    }
+
+                    //Not drawing a card
+                    if (!cardDrawn && input.cardClick)
+                    {
+                        //Attempting to play a card
+                        if(true/*Card legal to play*/)
+                        {
+                            phase++;
+                            print("  "+currPlayer+" end phase");
+                        }
+                        else
+                        {
+                            print("Illegal card");
+                        }
+                    }
+                    //Drawing a card
+                    else if(cardDrawn)
+                    {
+                        //Check if card that was drawn is playable.
+                        //  +If so, play card. (?)
+                        //  +If not, end turn.
+
+                        //Placeholder phase change
+                        phase++;
+                        print("  "+currPlayer+" end phase");
+                    }
+                break;
+                /*
+            case 2:
             //  Play
             //      +Use cardManager to change data
             //      +Use cardManager to check if legal move
             //      +Send signals to UI to change display and interface
-                if(false/*No cards in hand legal to play*/)
+                if(false)//No cards in hand legal to play
                 {
                     phase = 0;
                 }
@@ -168,7 +220,7 @@ public class turnActionManager : MonoBehaviour
                     //Get card info from UserInput.cs
                     //selectedCard = UserInput.getCard();//?
 
-                    if (true/*Card legal to be played*/)
+                    if (true)//Card legal to be played
                     {
                         //Apply special rules (Wild cark check, discard and played card)
                         //Move card from hand to discard pile
@@ -182,10 +234,13 @@ public class turnActionManager : MonoBehaviour
                     }
                 }
                 break;
+                */
 
             case 2:
             //  End
             //      +Send signal to turnOrderManager
+            //      +Reset tracking variables
+                cardDrawn = false;
                 break;
 
             default:
