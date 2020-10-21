@@ -44,8 +44,8 @@ public class UserInput : MonoBehaviour
                 else if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                 {
                     // clicked top
-                    
-                    Player1();
+                    string cardName = hit.transform.name;
+                    Player1(cardName);
                 }
                 /*
                 else if (hit.collider.CompareTag("Discard Pile"))
@@ -78,9 +78,9 @@ public class UserInput : MonoBehaviour
         print("Clicked on Card");
     }
 
-    void Player1()
+    void Player1(string cardName)
     {
-        print("Clicked on Player1");
+        print("Clicked on Player1 (" + cardName + ")");
     }
     /*
     void Discard_Pile()
