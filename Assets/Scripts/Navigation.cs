@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Navigation : MonoBehaviour
 {
+    [System.Obsolete]
     public void MENU_ACTION_GotoPage(string sceneName)
     {
         Application.LoadLevel(sceneName);

@@ -16,7 +16,6 @@ public class UserInput : MonoBehaviour
     {
         GetMouseClick();
 
-
     }
 
     void GetMouseClick()
@@ -36,13 +35,13 @@ public class UserInput : MonoBehaviour
                     
                     Deck();
                 }
-                else if ((hit.collider.CompareTag("Card"))) // && (selectable.playerCard == false))
+                else if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == false))
                 {
                     // clicked card
                     
                     Card();
                 }
-                else if ((hit.collider.CompareTag("Card"))) // && (selectable.playerCard == true))
+                else if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                 {
                     // clicked top
                     
@@ -54,7 +53,8 @@ public class UserInput : MonoBehaviour
                     // clicked card
 
                     Discard_Pile();
-                }*/
+                }
+                */
                 else if (hit.collider.CompareTag("UNO Button"))
                 {
                     // clicked top
