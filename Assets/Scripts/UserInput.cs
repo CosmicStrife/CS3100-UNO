@@ -4,18 +4,53 @@ using UnityEngine;
 
 public class UserInput : MonoBehaviour
 {
+    //TEMPORARY VARIABLES FOR DEMO
+    public bool deckClick;
+    public bool cardClick;
+    public bool player1Click;
+    public bool discardPileClick;
+    public bool UNObuttonClick;
+
+
     private Selectable selectable;
     // Start is called before the first frame update
     void Start()
     {
+        //TEMPORARY VARIABLES FOR DEMO
+        deckClick = false;
+        cardClick = false;
+        player1Click = false;
+        discardPileClick = false;
+        UNObuttonClick = false;
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        GetMouseClick();
+        //TEMPORARY CODE; stops sending signal once not pressed anymore
+        if(deckClick)
+        {
+            deckClick = false;
+        }
+        if (cardClick)
+        {
+            cardClick = false;
+        }
+        if (player1Click)
+        {
+            player1Click = false;
+        }
+        if (discardPileClick)
+        {
+            discardPileClick = false;
+        }
+        if (UNObuttonClick)
+        {
+            UNObuttonClick = false;
+        }
 
+        GetMouseClick();
     }
 
     void GetMouseClick()
@@ -54,13 +89,13 @@ public class UserInput : MonoBehaviour
 
                     Discard_Pile();
                 }
-                */
                 else if (hit.collider.CompareTag("UNO Button"))
                 {
                     // clicked top
 
                     UNO_Button();
                 }
+                */
             }
         }
     }
@@ -69,27 +104,32 @@ public class UserInput : MonoBehaviour
     {
         // deck click actions
         print("Clicked on deck");
-        
+        deckClick = true;
 
     }
 
     void Card()
     {
         print("Clicked on Card");
+        cardClick = true;
     }
 
     void Player1(string cardName)
     {
         print("Clicked on Player1 (" + cardName + ")");
+        player1Click = true;
     }
     /*
     void Discard_Pile()
     {
         print("Clicked on Discard_Pile");
-    }*/
+        discardPileClick = true;
+    }
 
     void UNO_Button()
     {
         print("Clicked on UNO_Button");
+        UNObuttonClick = true;
     }
+    */
 }
