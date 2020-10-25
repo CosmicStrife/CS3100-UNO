@@ -86,7 +86,6 @@ public class turnActionManager : MonoBehaviour
             print("  "+currPlayer+" start phase");
         }
 
-
         //Get data from player
         //  +Get data from userInput
 
@@ -110,7 +109,7 @@ public class turnActionManager : MonoBehaviour
         {
             if(input.UNObuttonClick)
             {
-                print("UNO!");//Temporary; change to display an image and noise
+                print("UNO! called");//Temporary; change to display an image and noise
                 UNOcalled = true;
             }
         }
@@ -139,11 +138,15 @@ public class turnActionManager : MonoBehaviour
             //      +Use cardManager to change data
             //      +Send signals to UI to change display and interface
             //      +Process special actions
+            //      +Reset tracking variables
+
+                //Reseting tracking variables
+                cardDrawn = false;
+
                 //Special Actions
-                
                 if (orderManager.rules.Contains("s"))
                 {
-                    phase = 3;
+                    phase = 2;
                 }
                 else
                 {
@@ -163,15 +166,16 @@ public class turnActionManager : MonoBehaviour
 
                     phase++;
                     print("  "+currPlayer+" draw/play phase");
-                    
                 }
                 break;
             case 1:
             //  Draw/Play
             //      +Check for matching cards in hand.
             //          -If none, require draw.
-                
-                    
+
+
+                if(currPlayer == "Player1")
+                {
                     if (input.deckClick)
                     {
                         //Move card from deck to hand
@@ -180,7 +184,7 @@ public class turnActionManager : MonoBehaviour
                     }
 
                     //Not drawing a card
-                    if (!cardDrawn && input.cardClick)
+                    if (!cardDrawn && input.cardClick /*&& input.player1Click*/)
                     {
                         //Attempting to play a card
                         if(true/*Card legal to play*/)
@@ -199,11 +203,17 @@ public class turnActionManager : MonoBehaviour
                         //Check if card that was drawn is playable.
                         //  +If so, play card. (?)
                         //  +If not, end turn.
-
-                        //Placeholder phase change
-                        phase++;
-                        print("  "+currPlayer+" end phase");
+                        if(false/*Card detected legal to play*/)
+                        {
+                            //
+                        }
+                        else
+                        {
+                            phase++;
+                            print("  "+currPlayer+" end phase");
+                        }
                     }
+                }
                 break;
                 /*
             case 2:
@@ -239,8 +249,7 @@ public class turnActionManager : MonoBehaviour
             case 2:
             //  End
             //      +Send signal to turnOrderManager
-            //      +Reset tracking variables
-                cardDrawn = false;
+                print("END PHASE");
                 break;
 
             default:

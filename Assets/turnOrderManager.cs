@@ -71,12 +71,12 @@ public class turnOrderManager : MonoBehaviour
         //Create turn order
         Shuffle(turnOrder);//? Randomizing function for lists; should work for this, right?
         
-        /*
+        
         foreach (string player in turnOrder)
         {
             print(player);
         }
-        */
+        
 
         //Set first player
         //currPlayer = players[0];
