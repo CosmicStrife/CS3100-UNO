@@ -14,11 +14,6 @@ public class UserInput : MonoBehaviour
     public bool discardPileClick;
     public bool UNObuttonClick;
 
-    List<string> cardData;
-    public string currColor;
-    public string currSymbol;
-    List<string> currRules;
-
 
     private Selectable selectable;
     // Start is called before the first frame update
@@ -88,10 +83,26 @@ public class UserInput : MonoBehaviour
                 }
                 else if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                 {
-                    // clicked top
-                    string cardName = hit.transform.name;
-                    //Player1(cardName);
-                    Card(cardName);
+                    //Card(cardName);
+
+                    //If the card is valid, play it
+                    if (valid(hit.transform.name))
+                    {
+                        /*Place the card onto the discard pile and remove from hand*/
+                        GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
+                        hit.transform.parent = temp.transform;
+                        //Move card onto top of discard pile
+                        hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
+                        //Add to the discard pile and remove from player hand
+                        GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
+                        GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
+                        hit.transform.GetComponent<Selectable>().playerCard = false;
+
+                        /* ------ the card play logic goes here ------*/
+                        print("This is valid");
+                    }
+                    else //otherwise, ignore the card click
+                        print("Invalid, select another.");
                 }
                 /*
                 else if (hit.collider.CompareTag("Discard Pile"))
@@ -121,13 +132,29 @@ public class UserInput : MonoBehaviour
         //May need to add code to store data of drawn card
     }
 
+
+    /*Finds if a card is valid*/
+    bool valid(string cardName)
+    {
+        List<string> discard = GameObject.Find("UNOGame").GetComponent<UNO>().Discard;
+        string topCard = discard[discard.Count - 1]; //Find the top card's name
+
+        //If the color is equal or it is a wild
+        if (cardName[0] == ' ' || GameObject.Find("UNOGame").GetComponent<UNO>().curColor == cardName[0])
+            return true;
+        else if (topCard.Substring(1) == cardName.Substring(1)) //If the "second part" of a card is equal
+            return true;
+        else if (cardName[0] == ' ') //if it is a wild
+            return true;
+        else
+            return false; //Otherwise it is unplayable
+    }
+
     void Card(string cardName)
     {
         print("Clicked on Card ("+cardName+")");
         cardClick = true;
 
-        //Adding card name analysis
-        cardName_Analysis(cardName);
     }
 
     /*
@@ -151,81 +178,5 @@ public class UserInput : MonoBehaviour
         UNObuttonClick = true;
     }
 
-    void cardName_Analysis(string cardName)
-    {
-        print("cardName_Analysis("+cardName+")");
-        print("\""+cardName+"\"");
 
-        //Preparing data storage
-        cardData.Clear();
-        currRules.Clear();
-
-        string temp = cardName;
-        
-
-        //Processing card name
-        //string temp[] = cardName.Split('_');
-        cardData = (temp.Split(' ')).ToList();
-        /*
-        foreach (string data in cardName.Split('_'))
-        {
-            print("  "+data);
-            cardData.Add(data);
-        }
-        */
-        
-        //Color detection
-        currColor = cardData[0];
-
-        //Symbol Detection
-        //  NOTE: Acting as though "Draw" is a symbol; ignoring quantity of drawn cards.
-        //          +Shouldn't matter; only draw-2s and draw-4s, and the draw-4s are all wild.
-        if(cardData.Count>1)
-        {
-            currSymbol = cardData[1];
-        }
-        else
-        {
-            currSymbol = "Wild";
-        }
-
-        //Rule Detection
-        switch (currSymbol)
-        {
-            case "Skip":
-                currRules.Add("s");
-                break;
-            case "Draw":
-                switch (cardData[2])
-                {
-                    case "2":
-                        currRules.Add("d2");
-                        break;
-                    case "4":
-                        currRules.Add("d4");
-                        break;
-                    case "Two":
-                        currRules.Add("d2");
-                        break;
-                    case "Four":
-                        currRules.Add("d4");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "Reverse":
-                currRules.Add("r");
-                break;
-            default:
-                break;
-        }
-
-        print("Card data:");
-        print("  "+currColor);
-        print("  "+currSymbol);
-
-        return;
-    }
-    
 }

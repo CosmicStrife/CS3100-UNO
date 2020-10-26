@@ -23,6 +23,7 @@ public class UNO : MonoBehaviour
     public List<string> Player1 = new List<string>();
     public List<string> Discard = new List<string>();
 
+    public char curColor;
 
     // Start is called before the first frame update
     void Start()
@@ -182,37 +183,11 @@ public class UNO : MonoBehaviour
         zOffset = 0.03f;
         GameObject Dcard = Instantiate(cardPrefab, new Vector3(DiscardPos.transform.position.x, DiscardPos.transform.position.y, DiscardPos.transform.position.z - zOffset), Quaternion.identity, DiscardPos.transform);
         Dcard.name = Discard[0];
+        curColor = Dcard.name[0]; //Set the current color to the top card on discard pile
         Dcard.GetComponent<Selectable>().faceUp = true;
         Dcard.GetComponent<Selectable>().playerCard = false;
         //print to make sure a card is removed
         //print(deck.Count());
     }
 
-    // Commented test code for position of CPU1 and Player1 hands 
-    //float xOffset = 0;
-    //float yOffset = 0.03f;
-    //float zOffset = 0.03f;
-    //        foreach (string card in CPU1)
-    //        {
-    //            GameObject newCard = Instantiate(cardPrefab, new Vector3(CPUPos.transform.position.x, CPUPos.transform.position.y - yOffset, CPUPos.transform.position.z - zOffset), Quaternion.identity, CPUPos.transform);
-    //newCard.name = card;
-    //            newCard.GetComponent<Selectable>().faceUp = true;                
-    //            xOffset = xOffset + 0.5f;
-    //            zOffset = zOffset + 0.05f;
-
-
-    // UnoDeal initial function used for testing and displaying all cards from the middle down
-    //void UNODeal()
-    //{
-    //    float yOffset = 0;
-    //    float zOffset = 0.03f;
-    //    foreach (string card in deck)
-    //    {
-    //        GameObject newCard = Instantiate(cardPrefab, new Vector3(transform.position.x, transform.position.y - yOffset, transform.position.z - zOffset), Quaternion.identity);
-    //        newCard.name = card;
-    //        newCard.GetComponent<Selectable>().faceUp = true;
-    //        yOffset = yOffset + 0.5f;
-    //        zOffset = zOffset + 0.03f;
-    //    }
-    //}
 }
