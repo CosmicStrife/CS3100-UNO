@@ -7,6 +7,8 @@ using System.Linq;
 
 public class UserInput : MonoBehaviour
 {
+    // INSTANCE OF UNO OBJECT NEEDED FOR REARRANGING POSITION OF REMAINING PLAYER1 CARDS
+    private UNO uno;
     //TEMPORARY VARIABLES FOR DEMO
     public bool deckClick;
     public bool cardClick;
@@ -25,7 +27,9 @@ public class UserInput : MonoBehaviour
         //player1Click = false;
         discardPileClick = false;
         UNObuttonClick = false;
-        
+        // Instantiation of UNO object used for rearranging position of Player1 cards 
+        uno = FindObjectOfType<UNO>();
+
     }
 
     // Update is called once per frame
@@ -97,6 +101,17 @@ public class UserInput : MonoBehaviour
                         GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
                         GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
                         hit.transform.GetComponent<Selectable>().playerCard = false;
+
+                        // Update the position of remaining Player1 cards 
+                        float xOffset = 0.03f;
+                        float yOffset = 0.03f;
+                        float zOffset = 0.03f;
+                        foreach (Transform child in uno.Player1Pos.transform)
+                        {
+                            child.gameObject.transform.position = new Vector3(uno.Player1Pos.transform.position.x + xOffset, uno.Player1Pos.transform.position.y - yOffset, uno.Player1Pos.transform.position.z - zOffset);
+                            xOffset = xOffset + 1.0f;
+                            zOffset = zOffset + 0.05f;
+                        }
 
                         /* ------ the card play logic goes here ------*/
                         print("This is valid");
