@@ -17,12 +17,6 @@ public class turnOrderManager : MonoBehaviour
     //Used for accessing and moving players in turnOrder
     string storedPlayer;
 
-    //Stores special rules to process
-    //  +Reverse ("r")
-    //  +Draw ("d2", "d4")
-    //  +Skip
-    public List<string> rules;
-
     private UNO UNOsystem;
     private turnActionManager actionManager;
 
@@ -111,7 +105,7 @@ public class turnOrderManager : MonoBehaviour
 
         //If (turn end)
         //  move to next turn.
-        if(actionManager.phase == 2)
+        if(actionManager.phase > 2)
         {
             //Change player whose turn it is
             if(turnDirection>0)

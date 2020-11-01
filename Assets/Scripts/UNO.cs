@@ -113,7 +113,7 @@ public class UNO : MonoBehaviour
     }
 
     // Take cards from shuffled deck and put them in CPU1 and Player1 list
-    void UNODraw(int num, List<string> list)
+    public void UNODraw(int num, List<string> list)
     {
         for (int i = 0; i < num; i++)
         {

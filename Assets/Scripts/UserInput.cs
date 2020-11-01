@@ -7,6 +7,12 @@ using System.Linq;
 
 public class UserInput : MonoBehaviour
 {
+    //GameObject UNOobject;
+    private UNO UNOsystem;
+
+    //GameObject turnManager;
+    private turnActionManager actionManager;
+
     //TEMPORARY VARIABLES FOR DEMO
     public bool deckClick;
     public bool cardClick;
@@ -19,6 +25,11 @@ public class UserInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //UNOsystem = UNOobject.GetComponent<UNO>();
+        UNOsystem = FindObjectOfType<UNO>();
+        //actionManager = turnManager.GetComponent<turnActionManager>;
+        actionManager = FindObjectOfType<turnActionManager>();
+
         //TEMPORARY VARIABLES FOR DEMO
         deckClick = false;
         cardClick = false;
@@ -84,25 +95,44 @@ public class UserInput : MonoBehaviour
                 else if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                 {
                     //Card(cardName);
+                    //print(hit.transform.name);
+                    /*
+                    string testCase = hit.transform.name;//" Wild";
+                    if(valid(testCase))
+                    {
+                        print("  valid("+testCase+") works");
+                    }
+                    else
+                    {
+                        print("  valid("+testCase+") doesn't work");
+                    }
+                    */
 
                     //If the card is valid, play it
-                    if (valid(hit.transform.name))
+                    if(actionManager.playAllowed)
                     {
-                        /*Place the card onto the discard pile and remove from hand*/
-                        GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
-                        hit.transform.parent = temp.transform;
-                        //Move card onto top of discard pile
-                        hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
-                        //Add to the discard pile and remove from player hand
-                        GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
-                        GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
-                        hit.transform.GetComponent<Selectable>().playerCard = false;
+                        if (valid(hit.transform.name) && ((!(actionManager.cardDrawn)) || (hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
+                        {
+                            print("  >Playing "+hit.transform.name);
+                            /*Place the card onto the discard pile and remove from hand*/
+                            GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
+                            hit.transform.parent = temp.transform;
+                            //Move card onto top of discard pile
+                            hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
+                            //Add to the discard pile and remove from player hand
+                            GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
+                            GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
+                            hit.transform.GetComponent<Selectable>().playerCard = false;
 
-                        /* ------ the card play logic goes here ------*/
-                        print("This is valid");
+                            /* ------ the card play logic goes here ------*/
+                            UNOsystem.curColor = hit.transform.name[0];
+                            actionManager.playDone = true;
+                            
+                            print("This is valid");
+                        }
+                        else //otherwise, ignore the card click
+                            print("Invalid, select another.");
                     }
-                    else //otherwise, ignore the card click
-                        print("Invalid, select another.");
                 }
                 /*
                 else if (hit.collider.CompareTag("Discard Pile"))
@@ -134,7 +164,7 @@ public class UserInput : MonoBehaviour
 
 
     /*Finds if a card is valid*/
-    bool valid(string cardName)
+    public bool valid(string cardName)
     {
         List<string> discard = GameObject.Find("UNOGame").GetComponent<UNO>().Discard;
         string topCard = discard[discard.Count - 1]; //Find the top card's name

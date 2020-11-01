@@ -10,6 +10,12 @@ public class turnActionManager : MonoBehaviour
     //Storees current player
     string currPlayer;
 
+    //Stores special rules to process
+    //  +Reverse ("r")
+    //  +Draw ("d2", "d4")
+    //  +Skip
+    public List<string> rules;
+
     //Stores current phase of turn
     //  +Start: 0
     //  +Draw/Play: 1
@@ -22,9 +28,34 @@ public class turnActionManager : MonoBehaviour
     //Keeps track of if a card was drawn this turn outside of special rules
     public bool cardDrawn;
 
+
+    //AI Variables; keeps track of what an AI is doing
+    public bool AIdraw;
+    public bool AIplay;
+    public string AIselectedCard;
+
+
+    //Stores what actions are allowed; used in UserInput.cs
+    public bool playAllowed;
+    public bool playDone;
+
+
+    //GameObject UNOobject;
     private UNO UNOsystem;
+
     private UserInput input;
     private turnOrderManager orderManager;
+
+    //Input stuff
+    Vector3 mousePosition;// = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
+    RaycastHit2D hit;// = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+    // Game objects for cardPrefab, CPU and Player1 hand place holders 
+    //public GameObject cardPrefab;
+    //public GameObject CPUPos;
+    //public GameObject Player1Pos;
+    //public GameObject DiscardPos;
+
 
     /*----------------------------------------------------------------------------------------------------------------------*/
 
@@ -71,6 +102,14 @@ public class turnActionManager : MonoBehaviour
         phase = 0;
         UNOcalled = false;
         cardDrawn = false;
+
+        playAllowed = false;
+        playDone = false;
+
+        AIdraw = false;
+        AIplay = false;
+        AIselectedCard = "NULL";
+
     }
 
     // Update is called once per frame
@@ -87,7 +126,14 @@ public class turnActionManager : MonoBehaviour
         }
 
         //Get data from player
-        //  +Get data from userInput
+        //  +Get data from code taken from userInput    
+        if (Input.GetMouseButtonDown(0))
+        {
+            //clickCount++;
+
+            mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
+            hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        }
 
         //UNO checker
         //  +If (multiple cards in hand) AND (UNOcalled)
@@ -115,14 +161,6 @@ public class turnActionManager : MonoBehaviour
         }
 
 
-        //TEMPORARY CODE; meant to substitute for AI action for now
-        if(currPlayer == "CPU1")
-        {
-            print("  Skipping CPU turn");
-            phase = 2;
-        }
-
-
         //Once per turn:
         //  Get currPlayer from turnOrderManager
         //  Maybe just have turnOrderManager change according to phase stored here
@@ -131,6 +169,9 @@ public class turnActionManager : MonoBehaviour
         //  Special Actions
         //      +Use rules list tpo detect
         //      +Send signals to UI to change display and interfaceswitch (phase)
+        //  Playing cards:
+        //      +Phase->determining whether or not allowed to play
+        //      +Use variables to allow or block playing cards
         switch (phase)
         {
             case 0:
@@ -140,32 +181,46 @@ public class turnActionManager : MonoBehaviour
             //      +Process special actions
             //      +Reset tracking variables
 
+                //Display for testing
+                if(currPlayer == "Player1")
+                {
+                    consoleDisplay(UNOsystem.Player1);
+                }
+                else
+                    consoleDisplay(UNOsystem.CPU1);
+
+
                 //Reseting tracking variables
                 cardDrawn = false;
 
                 //Special Actions
-                if (orderManager.rules.Contains("s"))
+                if (rules.Contains("s"))
                 {
                     phase = 2;
+                    rules.Remove("s");
                 }
                 else
                 {
-                    foreach (string rule in orderManager.rules)
+                    foreach (string rule in rules)
                     {
                         if(rule[0] == 'd')
                         {
                             //Draw
                             turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
                         }
-                        if(rule[0] == 'r')
+                        if(rule[0] == 's' || rule[0] == 'r')
                         {
-                            orderManager.turnDirection *= (-1);
+                            phase = 2;
                         }
                     }
+                    rules.Clear();
                     //Insert other checks here
 
-                    phase++;
-                    print("  "+currPlayer+" draw/play phase");
+                    if(phase != 2)
+                    {
+                        phase++;
+                        print("  "+currPlayer+" draw/play phase");
+                    }
                 }
                 break;
             case 1:
@@ -173,28 +228,114 @@ public class turnActionManager : MonoBehaviour
             //      +Check for matching cards in hand.
             //          -If none, require draw.
 
-
-                if(currPlayer == "Player1")
+                if(!playDone)
                 {
-                    if (input.deckClick)
+                    playAllowed = true;
+
+                    if(currPlayer == "Player1")
                     {
-                        //Move card from deck to hand
+                        if (input.deckClick && !cardDrawn)
+                        {
+                            cardDrawn = true;
+                            
+                            //Move card from deck to hand
+                            UNOsystem.UNODraw(1, UNOsystem.Player1);
 
-                        cardDrawn = true;
+                            //Refresh/rebuild hand display
+                            //  +Remove current sprites
+                            //  +Make new sprites
+                            refresh_hand_display(UNOsystem.Player1, UNOsystem.Player1Pos);
+
+                            print("  Drew: "+UNOsystem.Player1[UNOsystem.Player1.Count-1]);
+                        
+                            if(!input.valid(UNOsystem.Player1[UNOsystem.Player1.Count-1]))
+                            {
+                                print("  No possible moves");
+                                phase = 2;
+                            }
+                        }
                     }
+                    else if(currPlayer == "CPU1")
+                    {
+                        print("  CPU turn; skipping until an AI is made.");
 
+                        //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
+                        if (AIdraw && !cardDrawn)
+                        {
+                            cardDrawn = true;
+                            
+                            //Move card from deck to hand
+                            UNOsystem.UNODraw(1, UNOsystem.CPU1);
+
+                            //Refresh/rebuild hand display
+                            //  +Remove current sprites
+                            //  +Make new sprites
+                            refresh_hand_display(UNOsystem.CPU1, UNOsystem.CPUPos);
+
+                            print("  Drew: "+UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
+                        
+                            if(!input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
+                            {
+                                print("  No possible moves");
+                                phase = 2;
+                            }
+                        }
+                        
+                        /*
+                        //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
+                        if (input.valid(AIselectedCard) && ((!(cardDrawn)) || (AIselectedCard == UNOsystem.CPU1[UNOsystem.CPU1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
+                        {
+                            print("  >Playing "+hit.transform.name);
+                            //Place the card onto the discard pile and remove from hand
+                            GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
+                            //
+                            hit.transform.parent = temp.transform;
+                            //Move card onto top of discard pile
+                            hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
+                            //Add to the discard pile and remove from player hand
+                            GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
+                            GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
+                            hit.transform.GetComponent<Selectable>().playerCard = false;
+                            //
+
+                            // ------ the card play logic goes here ------
+                            //UNOsystem.curColor = hit.transform.name[0];
+                            //playDone = true;
+                            phase = 2;
+
+                            print("This is valid");
+                        }
+                        */
+                        else //otherwise, ignore the card click
+                            print("Invalid, select another.");
+
+                        //TEMPORARY
+                        phase = 2;
+                    }
+                }
+                else
+                {
+                    print("  Finishing turn");
+                    phase = 2;
+                }
+                    /*
                     //Not drawing a card
-                    if (!cardDrawn && input.cardClick /*&& input.player1Click*/)
+                    if (!cardDrawn && input.cardClick)
                     {
                         //Attempting to play a card
-                        if(true/*Card legal to play*/)
+                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                         {
-                            phase++;
-                            print("  "+currPlayer+" end phase");
-                        }
-                        else
-                        {
-                            print("Illegal card");
+                            if(input.valid(hit.transform.name))
+                            {
+                                //play(hit.transform.name, UNOsystem.Player1);
+
+                                phase++;
+                                print("  "+currPlayer+" end phase");
+                            }
+                            else
+                            {
+                                print("Illegal card");
+                            }
                         }
                     }
                     //Drawing a card
@@ -203,57 +344,177 @@ public class turnActionManager : MonoBehaviour
                         //Check if card that was drawn is playable.
                         //  +If so, play card. (?)
                         //  +If not, end turn.
-                        if(false/*Card detected legal to play*/)
+                        
+                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
                         {
-                            //
-                        }
-                        else
-                        {
-                            phase++;
-                            print("  "+currPlayer+" end phase");
+                            if(input.valid(UNOsystem.Player1[UNOsystem.Player1.Count-1]))
+                            {
+                                if(hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])
+                                {
+                                    //play(hit.transform.name, UNOsystem.Player1);
+
+                                    print("  "+currPlayer+" plays "+hit.transform.name);
+                                
+                                    phase++;
+                                    print("  "+currPlayer+" end phase");
+                                }
+                            }
+                            else
+                            {
+                                print("  "+UNOsystem.Player1[UNOsystem.Player1.Count-1]+" is not legal to play");
+                                
+                                phase++;
+                                print("  "+currPlayer+" end phase");
+                            }
+                            
                         }
                     }
-                }
-                break;
-                /*
-            case 2:
-            //  Play
-            //      +Use cardManager to change data
-            //      +Use cardManager to check if legal move
-            //      +Send signals to UI to change display and interface
-                if(false)//No cards in hand legal to play
-                {
-                    phase = 0;
-                }
-                else if (input.cardClick)
-                {
-                    //Get card info from UserInput.cs
-                    //selectedCard = UserInput.getCard();//?
-
-                    if (true)//Card legal to be played
+                    */
+                    /*
+                    else
                     {
-                        //Apply special rules (Wild cark check, discard and played card)
-                        //Move card from hand to discard pile
-                        
+                        print("No legal moves for "+currPlayer);
                         phase++;
                         print("  "+currPlayer+" end phase");
                     }
-                    else
-                    {
-                        print("Illegal card");
-                    }
-                }
+                    */
+                
                 break;
-                */
 
             case 2:
             //  End
             //      +Send signal to turnOrderManager
                 print("END PHASE");
+
+                playAllowed = false;
+                playDone = false;
+
+                cardDrawn = false;
+
+                AIdraw = false;
+                AIplay = false;
+                AIselectedCard = "NULL";
+
+                phase++;//Enable turn change
                 break;
 
             default:
                 break;
         }
     }
+
+
+    
+    //void play(RaycastHit2D hit, List<string> hand)
+
+    //Move card from hand to discard pile; update display
+    void getRules(string cardName)
+    {
+        //Store special rules of the played card, if any
+        switch (cardName[cardName.Length-1])
+        {
+            case 'o'://Draw two
+                rules.Add("d2");
+                break;
+            case 'p'://Skip
+                rules.Add("s");
+                break;
+            case 'e'://Reverse
+                //orderManager.turnDirection *= (-1);
+                rules.Add("s");//Only two players
+                break;
+            /*
+            case 'd'://Wild
+                rules.Add("w");
+                break;
+            */
+            case 'r'://Wild draw four
+                //Wild card rules handled in input.valid()
+                rules.Add("d4");
+                break;        
+            default:
+                break;
+        }
+/*
+        //Alter hand data
+
+        //Alter discard pile
+
+        //Store special rules of the played card, if any
+        switch (cardName[cardName.Length-1])
+        {
+            case 'o'://Draw two
+                rules.Add("d2");
+                break;
+            case 'p'://Skip
+                rules.Add("s");
+                break;
+            case 'e'://Reverse
+                //orderManager.turnDirection *= (-1);
+                rules.Add("s");//Only two players
+                break;
+            
+            //case 'd'://Wild
+            //    rules.Add("w");
+            //    break;
+            case 'r'://Wild draw four
+                //Wild card rules handled in input.valid()
+                rules.Add("d4");
+                break;        
+            default:
+                break;
+        }
+
+        //Rebuild/refresh hand display
+*/
+        return;
+    }
+
+    
+    void refresh_hand_display(List<string> hand, GameObject handPos)
+    {
+        //Delete current hand
+        //  How to find current cards to delete?
+        print(">Cards in hand:");
+        foreach (string card in hand)
+        {
+            print("  +"+card);
+        }
+
+        /*
+        float xOffset = 0.03f;
+        float yOffset = 0.03f;
+        float zOffset = 0.03f;
+        foreach (string card in hand)
+        {
+            GameObject newCard = Instantiate(UNOsystem.cardPrefab, new Vector3(handPos.transform.position.x + xOffset, handPos.transform.position.y - yOffset, handPos.transform.position.z - zOffset), Quaternion.identity, handPos.transform);
+            newCard.name = card;
+            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+            if(hand == UNOsystem.Player1)
+            {
+                newCard.GetComponent<Selectable>().faceUp = true;
+                newCard.GetComponent<Selectable>().playerCard = true;
+            }
+            else
+            {
+                newCard.GetComponent<Selectable>().faceUp = false;
+                newCard.GetComponent<Selectable>().playerCard = false;
+            }
+            xOffset = xOffset + 1.0f;
+            zOffset = zOffset + 0.05f;
+        }
+        */
+        
+        return;
+    }
+    
+    void consoleDisplay(List<string> hand)
+    {
+        print(">Cards in hand:");
+        foreach (string card in hand)
+        {
+            print("  +"+card);
+        }
+        return;
+    }    
 }
