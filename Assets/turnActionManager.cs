@@ -72,14 +72,19 @@ public class turnActionManager : MonoBehaviour
 
     void turnDraw(string player, byte numCards)
     {
-        int i=0;
-        while(i<numCards)
+        if(player == "Player1")
         {
-            //
-            if(input.deckClick)
+            int i=0;
+            while(i<numCards)
             {
-                print("Card drawn by" + player);
-                i++;
+                //
+                if(input.deckClick)
+                {
+                    print("Card drawn by" + player);
+                    UNOsystem.turnDraw(1, UNOsystem.Player1);
+                    input.refresh_hand_display();
+                    i++;
+                }
             }
         }
         return;
@@ -207,6 +212,7 @@ public class turnActionManager : MonoBehaviour
                         {
                             //Draw
                             turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
+                            //input.refresh_hand_display();
                         }
                         if(rule[0] == 's' || rule[0] == 'r')
                         {
@@ -239,12 +245,10 @@ public class turnActionManager : MonoBehaviour
                             cardDrawn = true;
                             
                             //Move card from deck to hand
-                            UNOsystem.UNODraw(1, UNOsystem.Player1);
+                            UNOsystem.turnDraw(1, UNOsystem.Player1);
 
                             //Refresh/rebuild hand display
-                            //  +Remove current sprites
-                            //  +Make new sprites
-                            refresh_hand_display(UNOsystem.Player1, UNOsystem.Player1Pos);
+                            input.refresh_hand_display();
 
                             print("  Drew: "+UNOsystem.Player1[UNOsystem.Player1.Count-1]);
                         
@@ -265,12 +269,12 @@ public class turnActionManager : MonoBehaviour
                             cardDrawn = true;
                             
                             //Move card from deck to hand
-                            UNOsystem.UNODraw(1, UNOsystem.CPU1);
+                            UNOsystem.turnDraw(1, UNOsystem.CPU1);
 
                             //Refresh/rebuild hand display
                             //  +Remove current sprites
                             //  +Make new sprites
-                            refresh_hand_display(UNOsystem.CPU1, UNOsystem.CPUPos);
+                            input.refresh_hand_display();
 
                             print("  Drew: "+UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
                         
@@ -470,44 +474,7 @@ public class turnActionManager : MonoBehaviour
         return;
     }
 
-    
-    void refresh_hand_display(List<string> hand, GameObject handPos)
-    {
-        //Delete current hand
-        //  How to find current cards to delete?
-        print(">Cards in hand:");
-        foreach (string card in hand)
-        {
-            print("  +"+card);
-        }
 
-        /*
-        float xOffset = 0.03f;
-        float yOffset = 0.03f;
-        float zOffset = 0.03f;
-        foreach (string card in hand)
-        {
-            GameObject newCard = Instantiate(UNOsystem.cardPrefab, new Vector3(handPos.transform.position.x + xOffset, handPos.transform.position.y - yOffset, handPos.transform.position.z - zOffset), Quaternion.identity, handPos.transform);
-            newCard.name = card;
-            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
-            if(hand == UNOsystem.Player1)
-            {
-                newCard.GetComponent<Selectable>().faceUp = true;
-                newCard.GetComponent<Selectable>().playerCard = true;
-            }
-            else
-            {
-                newCard.GetComponent<Selectable>().faceUp = false;
-                newCard.GetComponent<Selectable>().playerCard = false;
-            }
-            xOffset = xOffset + 1.0f;
-            zOffset = zOffset + 0.05f;
-        }
-        */
-        
-        return;
-    }
-    
     void consoleDisplay(List<string> hand)
     {
         print(">Cards in hand:");

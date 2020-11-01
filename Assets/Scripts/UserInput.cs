@@ -36,7 +36,10 @@ public class UserInput : MonoBehaviour
         //player1Click = false;
         discardPileClick = false;
         UNObuttonClick = false;
-        
+        // Instantiation of UNO object used for rearranging position of Player1 cards 
+        //  +Changed to UNOsystem; modified code to fit.
+        //uno = FindObjectOfType<UNO>();
+
     }
 
     // Update is called once per frame
@@ -111,7 +114,7 @@ public class UserInput : MonoBehaviour
                     //If the card is valid, play it
                     if(actionManager.playAllowed)
                     {
-                        if (valid(hit.transform.name) && ((!(actionManager.cardDrawn)) || (hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
+                        if (valid(hit.transform.name) && ((!actionManager.cardDrawn) || (hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
                         {
                             print("  >Playing "+hit.transform.name);
                             /*Place the card onto the discard pile and remove from hand*/
@@ -123,6 +126,21 @@ public class UserInput : MonoBehaviour
                             GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
                             GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
                             hit.transform.GetComponent<Selectable>().playerCard = false;
+
+                            //Moving to function
+                            refresh_hand_display();
+                            /*
+                            // Update the position of remaining Player1 cards 
+                            float xOffset = 0.03f;
+                            float yOffset = 0.03f;
+                            float zOffset = 0.03f;
+                            foreach (Transform child in UNOsystem.Player1Pos.transform)
+                            {
+                                child.gameObject.transform.position = new Vector3(UNOsystem.Player1Pos.transform.position.x + xOffset, UNOsystem.Player1Pos.transform.position.y - yOffset, UNOsystem.Player1Pos.transform.position.z - zOffset);
+                                xOffset = xOffset + 1.0f;
+                                zOffset = zOffset + 0.05f;
+                            }
+                            */
 
                             /* ------ the card play logic goes here ------*/
                             UNOsystem.curColor = hit.transform.name[0];
@@ -170,7 +188,7 @@ public class UserInput : MonoBehaviour
         string topCard = discard[discard.Count - 1]; //Find the top card's name
 
         //If the color is equal or it is a wild
-        if (cardName[0] == ' ' || GameObject.Find("UNOGame").GetComponent<UNO>().curColor == cardName[0])
+        if (cardName[0] == ' ' || GameObject.Find("UNOGame").GetComponent<UNO>().curColor == cardName[0] || UNOsystem.curColor == ' ')
             return true;
         else if (topCard.Substring(1) == cardName.Substring(1)) //If the "second part" of a card is equal
             return true;
@@ -206,6 +224,22 @@ public class UserInput : MonoBehaviour
     {
         print("Clicked on UNO_Button");
         UNObuttonClick = true;
+    }
+
+    public void refresh_hand_display()
+    {
+        // Update the position of remaining Player1 cards 
+        float xOffset = 0.03f;
+        float yOffset = 0.03f;
+        float zOffset = 0.03f;
+        foreach (Transform child in UNOsystem.Player1Pos.transform)
+        {
+            child.gameObject.transform.position = new Vector3(UNOsystem.Player1Pos.transform.position.x + xOffset, UNOsystem.Player1Pos.transform.position.y - yOffset, UNOsystem.Player1Pos.transform.position.z - zOffset);
+            xOffset = xOffset + 1.0f;
+            zOffset = zOffset + 0.05f;
+        }
+
+        return;
     }
 
 

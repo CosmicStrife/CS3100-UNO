@@ -190,4 +190,29 @@ public class UNO : MonoBehaviour
         //print(deck.Count());
     }
 
+    public void turnDraw(byte numCards, List<string> player)
+    {
+        if(player == Player1)
+        {
+            //
+            UNODraw(numCards, player);
+            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, Player1Pos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+            newCard.name = player[player.Count-1];
+            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+            newCard.GetComponent<Selectable>().faceUp = true;
+            newCard.GetComponent<Selectable>().playerCard = true;
+
+        }
+        else
+        {
+            UNODraw(numCards, player);
+            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, CPUPos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+            newCard.name = player[player.Count-1];
+            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+            newCard.GetComponent<Selectable>().faceUp = true;
+            newCard.GetComponent<Selectable>().playerCard = true;
+        }
+
+        return;
+    }
 }
