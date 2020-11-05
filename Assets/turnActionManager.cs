@@ -80,12 +80,18 @@ public class turnActionManager : MonoBehaviour
                 //
                 if(input.deckClick)
                 {
-                    print("Card drawn by" + player);
-                    UNOsystem.turnDraw(1, UNOsystem.Player1);
-                    input.refresh_hand_display();
+                    print("Card drawn by " + player);
+                    UNOsystem.turnDraw(1, UNOsystem.Player1);//
+                    input.refresh_hand_display(UNOsystem.Player1Pos);
                     i++;
                 }
             }
+        }
+        else
+        {
+            print(numCards+" cards drawn by " + player);
+            UNOsystem.turnDraw(numCards, UNOsystem.CPU1);//
+            input.refresh_hand_display(UNOsystem.CPUPos);
         }
         return;
     }
@@ -189,20 +195,20 @@ public class turnActionManager : MonoBehaviour
                 //Display for testing
                 if(currPlayer == "Player1")
                 {
-                    consoleDisplay(UNOsystem.Player1);
+                    consoleDisplay(UNOsystem.Player1, "Player1");
                 }
                 else
-                    consoleDisplay(UNOsystem.CPU1);
+                    consoleDisplay(UNOsystem.CPU1, "CPU1");
 
-
-                //Reseting tracking variables
-                cardDrawn = false;
 
                 //Special Actions
-                if (rules.Contains("s"))
+                consoleDisplay(rules, "current rules");
+                if (rules.Contains("s") || rules.Contains("r"))
                 {
+                    print("  Skipping");
                     phase = 2;
                     rules.Remove("s");
+                    rules.Remove("r");
                 }
                 else
                 {
@@ -210,25 +216,24 @@ public class turnActionManager : MonoBehaviour
                     {
                         if(rule[0] == 'd')
                         {
+                            print("  Drawing "+rule[1]);
                             //Draw
                             turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
                             //input.refresh_hand_display();
                         }
-                        if(rule[0] == 's' || rule[0] == 'r')
-                        {
-                            phase = 2;
-                        }
                     }
-                    rules.Clear();
                     //Insert other checks here
 
-                    if(phase != 2)
-                    {
-                        phase++;
-                        print("  "+currPlayer+" draw/play phase");
-                    }
+                    rules.Clear();
+                }
+
+                if(phase != 2)
+                {
+                    phase++;
+                    print("  "+currPlayer+" draw/play phase");
                 }
                 break;
+
             case 1:
             //  Draw/Play
             //      +Check for matching cards in hand.
@@ -248,7 +253,7 @@ public class turnActionManager : MonoBehaviour
                             UNOsystem.turnDraw(1, UNOsystem.Player1);
 
                             //Refresh/rebuild hand display
-                            input.refresh_hand_display();
+                            input.refresh_hand_display(UNOsystem.Player1Pos);
 
                             print("  Drew: "+UNOsystem.Player1[UNOsystem.Player1.Count-1]);
                         
@@ -274,15 +279,34 @@ public class turnActionManager : MonoBehaviour
                             //Refresh/rebuild hand display
                             //  +Remove current sprites
                             //  +Make new sprites
-                            input.refresh_hand_display();
+                            input.refresh_hand_display(UNOsystem.CPUPos);
 
                             print("  Drew: "+UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
-                        
+
+                            if(input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
+                            {
+                                //AI_play(AIhand, cardName==cardDrawn);
+                                UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
+                            }
+                            else
+                            {
+                                print("  No possible moves");
+                                phase = 2;
+                            }
+                            /*
                             if(!input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
                             {
                                 print("  No possible moves");
                                 phase = 2;
                             }
+                            */
+                        }
+
+                        if(AIplay && !cardDrawn)
+                        {
+                            //Make sure to select card before enabling AIplay
+                            //AI_play(AIhand, AISelectedCard);
+                            UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, AIselectedCard);
                         }
                         
                         /*
@@ -412,7 +436,7 @@ public class turnActionManager : MonoBehaviour
     //void play(RaycastHit2D hit, List<string> hand)
 
     //Move card from hand to discard pile; update display
-    void getRules(string cardName)
+    public void getRules(string cardName)
     {
         //Store special rules of the played card, if any
         switch (cardName[cardName.Length-1])
@@ -475,9 +499,9 @@ public class turnActionManager : MonoBehaviour
     }
 
 
-    void consoleDisplay(List<string> hand)
+    void consoleDisplay(List<string> hand, string varName)
     {
-        print(">Cards in hand:");
+        print(">Contents of "+varName+":");
         foreach (string card in hand)
         {
             print("  +"+card);
