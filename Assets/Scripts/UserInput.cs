@@ -237,7 +237,14 @@ public class UserInput : MonoBehaviour
         {
             //child.gameObject.transform.position = new Vector3(UNOsystem.Player1Pos.transform.position.x + xOffset, UNOsystem.Player1Pos.transform.position.y - yOffset, UNOsystem.Player1Pos.transform.position.z - zOffset);
             child.gameObject.transform.position = new Vector3(handPos.transform.position.x + xOffset, handPos.transform.position.y - yOffset, handPos.transform.position.z - zOffset);
-            xOffset = xOffset + 1.0f;
+            if(actionManager.currPlayer == "Player1")
+            {
+                xOffset = xOffset + 1.0f;
+            }
+            else
+            {
+                xOffset = xOffset - 0.8f;
+            }
             zOffset = zOffset + 0.05f;
         }
 

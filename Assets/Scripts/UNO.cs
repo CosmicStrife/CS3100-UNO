@@ -7,6 +7,7 @@ using System.Runtime.ConstrainedExecution;
 public class UNO : MonoBehaviour
 {
     private UserInput input;
+    private turnActionManager actionManager;
 
 
     // Sprite array to hold the png card images
@@ -195,25 +196,28 @@ public class UNO : MonoBehaviour
 
     public void turnDraw(byte numCards, List<string> player)
     {
-        if(player == Player1)
+        for(byte i=0; i<numCards; i++)
         {
-            //
-            UNODraw(numCards, player);
-            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, Player1Pos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
-            newCard.name = player[player.Count-1];
-            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
-            newCard.GetComponent<Selectable>().faceUp = true;
-            newCard.GetComponent<Selectable>().playerCard = true;
+            if(player == Player1)
+            {
+                //
+                UNODraw(numCards, player);
+                GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, Player1Pos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+                newCard.name = player[player.Count-1];
+                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+                newCard.GetComponent<Selectable>().faceUp = true;
+                newCard.GetComponent<Selectable>().playerCard = true;
 
-        }
-        else
-        {
-            UNODraw(numCards, player);
-            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, CPUPos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
-            newCard.name = player[player.Count-1];
-            // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
-            newCard.GetComponent<Selectable>().faceUp = false;
-            newCard.GetComponent<Selectable>().playerCard = false;
+            }
+            else
+            {
+                UNODraw(numCards, player);
+                GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, CPUPos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
+                newCard.name = player[player.Count-1];
+                // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
+                newCard.GetComponent<Selectable>().faceUp = false;
+                newCard.GetComponent<Selectable>().playerCard = false;
+            }
         }
 
         return;
@@ -246,6 +250,10 @@ public class UNO : MonoBehaviour
 
         //Moving to function
         input.refresh_hand_display(handPos);
+
+        curColor = cardName[0];
+        actionManager.getRules(cardName);
+        actionManager.playDone = true;
 
         return;
     }

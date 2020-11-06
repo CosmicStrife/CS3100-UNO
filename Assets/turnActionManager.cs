@@ -8,7 +8,7 @@ public class turnActionManager : MonoBehaviour
 {
     /*---Variables---*/
     //Storees current player
-    string currPlayer;
+    public string currPlayer;
 
     //Stores special rules to process
     //  +Reverse ("r")
@@ -287,57 +287,28 @@ public class turnActionManager : MonoBehaviour
                             {
                                 //AI_play(AIhand, cardName==cardDrawn);
                                 UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
+                                phase = 2;
                             }
                             else
                             {
                                 print("  No possible moves");
                                 phase = 2;
                             }
-                            /*
-                            if(!input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
-                            {
-                                print("  No possible moves");
-                                phase = 2;
-                            }
-                            */
                         }
 
+                        //When an AI plays a card:
+                        //  1. Sends name of card played
+                        //      >AIselectedCard = card played
+                        //  2. Sets AIPlay to true to enable playing the card
                         if(AIplay && !cardDrawn)
                         {
                             //Make sure to select card before enabling AIplay
                             //AI_play(AIhand, AISelectedCard);
                             UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, AIselectedCard);
-                        }
-                        
-                        /*
-                        //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
-                        if (input.valid(AIselectedCard) && ((!(cardDrawn)) || (AIselectedCard == UNOsystem.CPU1[UNOsystem.CPU1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
-                        {
-                            print("  >Playing "+hit.transform.name);
-                            //Place the card onto the discard pile and remove from hand
-                            GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
-                            //
-                            hit.transform.parent = temp.transform;
-                            //Move card onto top of discard pile
-                            hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
-                            //Add to the discard pile and remove from player hand
-                            GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
-                            GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
-                            hit.transform.GetComponent<Selectable>().playerCard = false;
-                            //
-
-                            // ------ the card play logic goes here ------
-                            //UNOsystem.curColor = hit.transform.name[0];
-                            //playDone = true;
                             phase = 2;
-
-                            print("This is valid");
                         }
-                        */
-                        else //otherwise, ignore the card click
-                            print("Invalid, select another.");
 
-                        //TEMPORARY
+                        /*-----TEMPORARY: Skips AI's turn-----*/
                         phase = 2;
                     }
                 }
@@ -346,66 +317,6 @@ public class turnActionManager : MonoBehaviour
                     print("  Finishing turn");
                     phase = 2;
                 }
-                    /*
-                    //Not drawing a card
-                    if (!cardDrawn && input.cardClick)
-                    {
-                        //Attempting to play a card
-                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
-                        {
-                            if(input.valid(hit.transform.name))
-                            {
-                                //play(hit.transform.name, UNOsystem.Player1);
-
-                                phase++;
-                                print("  "+currPlayer+" end phase");
-                            }
-                            else
-                            {
-                                print("Illegal card");
-                            }
-                        }
-                    }
-                    //Drawing a card
-                    else if(cardDrawn)
-                    {
-                        //Check if card that was drawn is playable.
-                        //  +If so, play card. (?)
-                        //  +If not, end turn.
-                        
-                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
-                        {
-                            if(input.valid(UNOsystem.Player1[UNOsystem.Player1.Count-1]))
-                            {
-                                if(hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])
-                                {
-                                    //play(hit.transform.name, UNOsystem.Player1);
-
-                                    print("  "+currPlayer+" plays "+hit.transform.name);
-                                
-                                    phase++;
-                                    print("  "+currPlayer+" end phase");
-                                }
-                            }
-                            else
-                            {
-                                print("  "+UNOsystem.Player1[UNOsystem.Player1.Count-1]+" is not legal to play");
-                                
-                                phase++;
-                                print("  "+currPlayer+" end phase");
-                            }
-                            
-                        }
-                    }
-                    */
-                    /*
-                    else
-                    {
-                        print("No legal moves for "+currPlayer);
-                        phase++;
-                        print("  "+currPlayer+" end phase");
-                    }
-                    */
                 
                 break;
 
