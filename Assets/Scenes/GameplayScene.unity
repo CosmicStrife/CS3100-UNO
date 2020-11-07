@@ -489,6 +489,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a06a63a76bddf0499c9662b196d9c78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deckClick: 0
+  cardClick: 0
+  discardPileClick: 0
+  UNObuttonClick: 0
 --- !u!114 &275883290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,6 +623,7 @@ MonoBehaviour:
   CPU1: []
   Player1: []
   Discard: []
+  curColor: 0
 --- !u!4 &275883291
 Transform:
   m_ObjectHideFlags: 0
@@ -1361,6 +1366,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cc7bc98c2fdb3468a6de3b55bd0522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currPlayer: 
+  rules: []
+  phase: 0
+  UNOcalled: 0
+  cardDrawn: 0
+  AIdraw: 0
+  AIplay: 0
+  AIselectedCard: 
+  playAllowed: 0
+  playDone: 0
 --- !u!114 &972102041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1373,6 +1388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f762c547f9467842a4d4d091e605b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnOrder: []
+  turnDirection: 0
 --- !u!4 &972102042
 Transform:
   m_ObjectHideFlags: 0
@@ -1462,6 +1479,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1391424051}
+  - component: {fileID: 1391424052}
   m_Layer: 0
   m_Name: CPU1
   m_TagString: Untagged
@@ -1484,6 +1502,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1391424052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391424050}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 260d41e720735c549bc143a2f5a5113f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TAMan: {fileID: 972102040}
+  UNOgame: {fileID: 275883290}
+  UI: {fileID: 275883289}
 --- !u!1 &1414148833
 GameObject:
   m_ObjectHideFlags: 0

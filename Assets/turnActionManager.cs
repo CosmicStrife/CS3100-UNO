@@ -46,6 +46,8 @@ public class turnActionManager : MonoBehaviour
     private UserInput input;
     private turnOrderManager orderManager;
 
+    //public DumbAI DumbAI;
+
     //Input stuff
     Vector3 mousePosition;// = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
     RaycastHit2D hit;// = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -61,7 +63,7 @@ public class turnActionManager : MonoBehaviour
 
     //Check turnOrderManager for signal for new player
     //  If new player, send signal that change has been recieved
-    string getCurrPlayer()
+    public string getCurrPlayer()
     {
         //return orderManager.turnOrder[0];
         //return orderManager.turnOrder.First();
@@ -70,21 +72,21 @@ public class turnActionManager : MonoBehaviour
         //return "temp";
     }
 
-    void turnDraw(string player, byte numCards)
+    void turnDrawAM(string player, byte numCards)
     {
         if(player == "Player1")
         {
             int i=0;
             while(i<numCards)
             {
-                //
-                if(input.deckClick)
-                {
+                //For some reason it does not work within the if statement
+                //if(input.deckClick)
+                //{
                     print("Card drawn by " + player);
                     UNOsystem.turnDraw(1, UNOsystem.Player1);//
                     input.refresh_hand_display(UNOsystem.Player1Pos);
                     i++;
-                }
+                //}
             }
         }
         else
@@ -193,13 +195,17 @@ public class turnActionManager : MonoBehaviour
             //      +Reset tracking variables
 
                 //Display for testing
+
+
+                
+                /*
                 if(currPlayer == "Player1")
                 {
                     consoleDisplay(UNOsystem.Player1, "Player1");
                 }
                 else
                     consoleDisplay(UNOsystem.CPU1, "CPU1");
-
+                */
 
                 //Special Actions
                 consoleDisplay(rules, "current rules");
@@ -218,7 +224,7 @@ public class turnActionManager : MonoBehaviour
                         {
                             print("  Drawing "+rule[1]);
                             //Draw
-                            turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
+                            turnDrawAM(currPlayer, (byte)Char.GetNumericValue(rule[1]));
                             //input.refresh_hand_display();
                         }
                     }
@@ -266,8 +272,15 @@ public class turnActionManager : MonoBehaviour
                     }
                     else if(currPlayer == "CPU1")
                     {
-                        print("  CPU turn; skipping until an AI is made.");
+                        //print("  CPU turn; skipping until an AI is made.");
 
+                        
+                        
+                        dumbAILogic();
+                        input.refresh_hand_display(UNOsystem.CPUPos);
+
+
+                        /*
                         //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
                         if (AIdraw && !cardDrawn)
                         {
@@ -307,6 +320,8 @@ public class turnActionManager : MonoBehaviour
                             UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, AIselectedCard);
                             phase = 2;
                         }
+
+                        */
 
                         /*-----TEMPORARY: Skips AI's turn-----*/
                         phase = 2;
@@ -419,4 +434,60 @@ public class turnActionManager : MonoBehaviour
         }
         return;
     }    
+
+    void dumbAILogic()
+    {
+        List<string> CPUhand = UNOsystem.CPU1;
+        bool valid = true;
+
+        print("CPUHAND IN DUMBAILOGIC");
+        foreach (string card in CPUhand)
+        {
+            print("checking if " + card + " is valid");
+            print(CPUhand.Count);
+            valid = input.valid(card);
+            if(valid)
+            {
+                //print("Made it in if statement");
+                AIplay = true;
+                AIselectedCard = card;
+                AIPlay(card);
+                if(card[0] == ' ')
+                {
+                    UNOsystem.curColor = 'R';
+                }
+                break;
+            }
+        }
+        if(valid == false)
+        {
+            UNOsystem.turnDraw(1, UNOsystem.CPU1);
+        }
+        print("valid is ");
+        print(valid);
+    }
+
+    void AIPlay(string card)
+    {
+        print("CPU >Playing "+card);
+        /*Place the card onto the discard pile and remove from hand*/
+        GameObject discardpile = UNOsystem.DiscardPos;
+        string path = "/CPU1/CPU1/" + card;
+        GameObject cardInHand = GameObject.Find(path);
+        cardInHand.transform.parent = discardpile.transform;
+        cardInHand.transform.GetComponent<Selectable>().faceUp = true;
+        cardInHand.transform.GetComponent<Selectable>().playerCard = false;
+        print("test" + cardInHand.transform.name);
+
+        //Move card onto top of discard pile
+        cardInHand.transform.position = new Vector3(discardpile.transform.position.x, discardpile.transform.position.y, discardpile.transform.position.z - .03f * (UNOsystem.Discard.Count + 1));
+        //Add to the discard pile and remove from player hand
+        UNOsystem.CPU1.Remove(card);
+        UNOsystem.Discard.Add(card);
+
+        getRules(card);
+
+        input.refresh_hand_display(UNOsystem.CPUPos);
+        UNOsystem.curColor=card[0]; //Might need to be changed for the smart AI
+    }
 }

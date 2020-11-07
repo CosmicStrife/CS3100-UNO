@@ -201,7 +201,7 @@ public class UNO : MonoBehaviour
             if(player == Player1)
             {
                 //
-                UNODraw(numCards, player);
+                UNODraw(1, player);
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, Player1Pos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
                 newCard.name = player[player.Count-1];
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
@@ -211,7 +211,7 @@ public class UNO : MonoBehaviour
             }
             else
             {
-                UNODraw(numCards, player);
+                UNODraw(1, player);
                 GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity, CPUPos.transform);//Player1Pos.transform.position.x + xOffset, Player1Pos.transform.position.y - yOffset, Player1Pos.transform.position.z - zOffset), Quaternion.identity, Player1Pos.transform);
                 newCard.name = player[player.Count-1];
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
