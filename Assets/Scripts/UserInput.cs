@@ -19,6 +19,7 @@ public class UserInput : MonoBehaviour
     //public bool player1Click;
     public bool discardPileClick;
     public bool UNObuttonClick;
+    public bool playerSafe;
 
 
     private Selectable selectable;
@@ -36,6 +37,7 @@ public class UserInput : MonoBehaviour
         //player1Click = false;
         discardPileClick = false;
         UNObuttonClick = false;
+        playerSafe = false;
         // Instantiation of UNO object used for rearranging position of Player1 cards 
         //  +Changed to UNOsystem; modified code to fit.
         //uno = FindObjectOfType<UNO>();
@@ -45,6 +47,7 @@ public class UserInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UNO_Check();
         //TEMPORARY CODE; stops sending signal once not pressed anymore
         if(deckClick)
         {
@@ -224,6 +227,21 @@ public class UserInput : MonoBehaviour
     {
         print("Clicked on UNO_Button");
         UNObuttonClick = true;
+        List<string> player_hand = GameObject.Find("UNOGame").GetComponent<UNO>().Player1;
+        if (player_hand.Count == 1)
+        {
+            print("Valid UNO!");
+            playerSafe = true;
+        }
+        else
+            print("Invalid UNO!");
+    }
+
+    void UNO_Check()
+    {
+        List<string> player_hand = GameObject.Find("UNOGame").GetComponent<UNO>().Player1;
+        if (playerSafe == true && player_hand.Count > 1)
+            playerSafe = false;
     }
 
     public void refresh_hand_display()
