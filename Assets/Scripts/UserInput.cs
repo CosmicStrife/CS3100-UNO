@@ -20,6 +20,7 @@ public class UserInput : MonoBehaviour
     public bool discardPileClick;
     public bool UNObuttonClick;
 
+    public AudioSource[] allAudio = new AudioSource[3];
 
     private Selectable selectable;
     // Start is called before the first frame update
@@ -39,6 +40,7 @@ public class UserInput : MonoBehaviour
         // Instantiation of UNO object used for rearranging position of Player1 cards 
         //  +Changed to UNOsystem; modified code to fit.
         //uno = FindObjectOfType<UNO>();
+
 
     }
 
@@ -122,11 +124,12 @@ public class UserInput : MonoBehaviour
                             hit.transform.parent = temp.transform;
                             //Move card onto top of discard pile
                             hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
+
                             //Add to the discard pile and remove from player hand
                             GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
                             GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
                             hit.transform.GetComponent<Selectable>().playerCard = false;
-
+                            allAudio[1].Play();
                             //Moving to function
                             refresh_hand_display(UNOsystem.Player1Pos);
                             /*

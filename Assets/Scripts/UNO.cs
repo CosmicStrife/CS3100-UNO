@@ -207,6 +207,7 @@ public class UNO : MonoBehaviour
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
                 newCard.GetComponent<Selectable>().faceUp = true;
                 newCard.GetComponent<Selectable>().playerCard = true;
+                FindObjectOfType<UserInput>().allAudio[2].Play();
 
             }
             else
@@ -217,6 +218,7 @@ public class UNO : MonoBehaviour
                 // GetComponent returns the component of type if the game object has one attached, null if it doesn't.
                 newCard.GetComponent<Selectable>().faceUp = false;
                 newCard.GetComponent<Selectable>().playerCard = false;
+                FindObjectOfType<UserInput>().allAudio[2].Play();
             }
         }
 
