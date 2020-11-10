@@ -6,6 +6,11 @@ using System;
 
 public class turnActionManager : MonoBehaviour
 {
+    public GameObject signalBlue;
+    public GameObject signalGreen;
+    public GameObject signalRed;
+    public GameObject signalYellow;
+
     /*---Variables---*/
     //Storees current player
     public string currPlayer;
@@ -23,7 +28,7 @@ public class turnActionManager : MonoBehaviour
     public byte phase;
 
     //Keeps track of if UNO is called at an appropriate time
-    public bool UNOcalled;
+    public bool UNOcalled;    
 
     //Keeps track of if a card was drawn this turn outside of special rules
     public bool cardDrawn;
@@ -42,6 +47,9 @@ public class turnActionManager : MonoBehaviour
 
     //GameObject UNOobject;
     private UNO UNOsystem;
+
+    //GameObject WildMEnu;
+    private WildMenu WMsystem;
 
     private UserInput input;
     private turnOrderManager orderManager;
@@ -106,6 +114,11 @@ public class turnActionManager : MonoBehaviour
         //Connect to turnOrderManager
         UNOsystem = FindObjectOfType<UNO>();
         input = FindObjectOfType<UserInput>();
+
+        //Connect to Wild Menu
+        WMsystem = FindObjectOfType<WildMenu>();
+
+
         //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
         //orderManager = GetComponent("turnOrderManager");
         //orderManager = FindObjectOfType<turnOrderManager>();
@@ -385,6 +398,7 @@ public class turnActionManager : MonoBehaviour
             case 'r'://Wild draw four
                 //Wild card rules handled in input.valid()
                 rules.Add("d4");
+                WMsystem.WildMenuIsActive = true;
                 break;        
             default:
                 break;
@@ -454,7 +468,9 @@ public class turnActionManager : MonoBehaviour
                 AIPlay(card);
                 if(card[0] == ' ')
                 {
-                    UNOsystem.curColor = 'R';
+                    UNOsystem.curColor = 'Y';
+                    StartCoroutine(colorYellow());
+
                 }
                 break;
             }
@@ -495,5 +511,33 @@ public class turnActionManager : MonoBehaviour
     IEnumerator delay()
     {
         yield return new WaitForSeconds(10);
+    }
+
+    IEnumerator colorBlue()
+    {
+        signalBlue.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(3);
+        signalBlue.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    IEnumerator colorGreen()
+    {
+        signalGreen.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(3);
+        signalGreen.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    IEnumerator colorRed()
+    {
+        signalRed.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(3);
+        signalRed.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    IEnumerator colorYellow()
+    {
+        signalYellow.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(3);
+        signalYellow.GetComponent<SpriteRenderer>().enabled = false;
     }
 }
