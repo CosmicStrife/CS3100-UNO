@@ -274,8 +274,8 @@ public class turnActionManager : MonoBehaviour
                     {
                         //print("  CPU turn; skipping until an AI is made.");
 
-                        
-                        
+
+                        StartCoroutine(delay());  //NEEDS WORK: Attempt to delay CPU
                         dumbAILogic();
                         input.refresh_hand_display(UNOsystem.CPUPos);
 
@@ -481,6 +481,7 @@ public class turnActionManager : MonoBehaviour
 
         //Move card onto top of discard pile
         cardInHand.transform.position = new Vector3(discardpile.transform.position.x, discardpile.transform.position.y, discardpile.transform.position.z - .03f * (UNOsystem.Discard.Count + 1));
+        input.allAudio[1].Play();
         //Add to the discard pile and remove from player hand
         UNOsystem.CPU1.Remove(card);
         UNOsystem.Discard.Add(card);
@@ -489,5 +490,10 @@ public class turnActionManager : MonoBehaviour
 
         input.refresh_hand_display(UNOsystem.CPUPos);
         UNOsystem.curColor=card[0]; //Might need to be changed for the smart AI
+    }
+
+    IEnumerator delay()
+    {
+        yield return new WaitForSeconds(10);
     }
 }
