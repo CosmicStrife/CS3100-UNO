@@ -21,6 +21,7 @@ public class UserInput : MonoBehaviour
     public bool UNObuttonClick;
     public bool playerSafe;
 
+    public AudioSource[] allAudio = new AudioSource[3];
 
     private Selectable selectable;
     // Start is called before the first frame update
@@ -41,6 +42,7 @@ public class UserInput : MonoBehaviour
         // Instantiation of UNO object used for rearranging position of Player1 cards 
         //  +Changed to UNOsystem; modified code to fit.
         //uno = FindObjectOfType<UNO>();
+
 
     }
 
@@ -125,13 +127,14 @@ public class UserInput : MonoBehaviour
                             hit.transform.parent = temp.transform;
                             //Move card onto top of discard pile
                             hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
+
                             //Add to the discard pile and remove from player hand
                             GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
                             GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
                             hit.transform.GetComponent<Selectable>().playerCard = false;
-
+                            allAudio[1].Play();
                             //Moving to function
-                            refresh_hand_display();
+                            refresh_hand_display(UNOsystem.Player1Pos);
                             /*
                             // Update the position of remaining Player1 cards 
                             float xOffset = 0.03f;
@@ -147,6 +150,7 @@ public class UserInput : MonoBehaviour
 
                             /* ------ the card play logic goes here ------*/
                             UNOsystem.curColor = hit.transform.name[0];
+                            actionManager.getRules(hit.transform.name);
                             actionManager.playDone = true;
                             
                             print("This is valid");
@@ -244,16 +248,24 @@ public class UserInput : MonoBehaviour
             playerSafe = false;
     }
 
-    public void refresh_hand_display()
+    public void refresh_hand_display(GameObject handPos)
     {
         // Update the position of remaining Player1 cards 
         float xOffset = 0.03f;
         float yOffset = 0.03f;
         float zOffset = 0.03f;
-        foreach (Transform child in UNOsystem.Player1Pos.transform)
+        foreach (Transform child in handPos.transform)//UNOsystem.Player1Pos.transform)
         {
-            child.gameObject.transform.position = new Vector3(UNOsystem.Player1Pos.transform.position.x + xOffset, UNOsystem.Player1Pos.transform.position.y - yOffset, UNOsystem.Player1Pos.transform.position.z - zOffset);
-            xOffset = xOffset + 1.0f;
+            //child.gameObject.transform.position = new Vector3(UNOsystem.Player1Pos.transform.position.x + xOffset, UNOsystem.Player1Pos.transform.position.y - yOffset, UNOsystem.Player1Pos.transform.position.z - zOffset);
+            child.gameObject.transform.position = new Vector3(handPos.transform.position.x + xOffset, handPos.transform.position.y - yOffset, handPos.transform.position.z - zOffset);
+            if(actionManager.currPlayer == "Player1")
+            {
+                xOffset = xOffset + 1.0f;
+            }
+            else
+            {
+                xOffset = xOffset - 0.8f;
+            }
             zOffset = zOffset + 0.05f;
         }
 

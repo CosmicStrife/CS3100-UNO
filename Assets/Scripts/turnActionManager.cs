@@ -8,7 +8,7 @@ public class turnActionManager : MonoBehaviour
 {
     /*---Variables---*/
     //Storees current player
-    string currPlayer;
+    public string currPlayer;
 
     //Stores special rules to process
     //  +Reverse ("r")
@@ -46,6 +46,8 @@ public class turnActionManager : MonoBehaviour
     private UserInput input;
     private turnOrderManager orderManager;
 
+    //public DumbAI DumbAI;
+
     //Input stuff
     Vector3 mousePosition;// = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
     RaycastHit2D hit;// = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -61,7 +63,7 @@ public class turnActionManager : MonoBehaviour
 
     //Check turnOrderManager for signal for new player
     //  If new player, send signal that change has been recieved
-    string getCurrPlayer()
+    public string getCurrPlayer()
     {
         //return orderManager.turnOrder[0];
         //return orderManager.turnOrder.First();
@@ -70,22 +72,28 @@ public class turnActionManager : MonoBehaviour
         //return "temp";
     }
 
-    void turnDraw(string player, byte numCards)
+    void turnDrawAM(string player, byte numCards)
     {
         if(player == "Player1")
         {
             int i=0;
             while(i<numCards)
             {
-                //
-                if(input.deckClick)
-                {
-                    print("Card drawn by" + player);
-                    UNOsystem.turnDraw(1, UNOsystem.Player1);
-                    input.refresh_hand_display();
+                //For some reason it does not work within the if statement
+                //if(input.deckClick)
+                //{
+                    print("Card drawn by " + player);
+                    UNOsystem.turnDraw(1, UNOsystem.Player1);//
+                    input.refresh_hand_display(UNOsystem.Player1Pos);
                     i++;
-                }
+                //}
             }
+        }
+        else
+        {
+            print(numCards+" cards drawn by " + player);
+            UNOsystem.turnDraw(numCards, UNOsystem.CPU1);//
+            input.refresh_hand_display(UNOsystem.CPUPos);
         }
         return;
     }
@@ -187,22 +195,26 @@ public class turnActionManager : MonoBehaviour
             //      +Reset tracking variables
 
                 //Display for testing
+
+
+                
+                /*
                 if(currPlayer == "Player1")
                 {
-                    consoleDisplay(UNOsystem.Player1);
+                    consoleDisplay(UNOsystem.Player1, "Player1");
                 }
                 else
-                    consoleDisplay(UNOsystem.CPU1);
-
-
-                //Reseting tracking variables
-                cardDrawn = false;
+                    consoleDisplay(UNOsystem.CPU1, "CPU1");
+                */
 
                 //Special Actions
-                if (rules.Contains("s"))
+                consoleDisplay(rules, "current rules");
+                if (rules.Contains("s") || rules.Contains("r"))
                 {
+                    print("  Skipping");
                     phase = 2;
                     rules.Remove("s");
+                    rules.Remove("r");
                 }
                 else
                 {
@@ -210,25 +222,24 @@ public class turnActionManager : MonoBehaviour
                     {
                         if(rule[0] == 'd')
                         {
+                            print("  Drawing "+rule[1]);
                             //Draw
-                            turnDraw(currPlayer, (byte)Char.GetNumericValue(rule[1]));
+                            turnDrawAM(currPlayer, (byte)Char.GetNumericValue(rule[1]));
                             //input.refresh_hand_display();
                         }
-                        if(rule[0] == 's' || rule[0] == 'r')
-                        {
-                            phase = 2;
-                        }
                     }
-                    rules.Clear();
                     //Insert other checks here
 
-                    if(phase != 2)
-                    {
-                        phase++;
-                        print("  "+currPlayer+" draw/play phase");
-                    }
+                    rules.Clear();
+                }
+
+                if(phase != 2)
+                {
+                    phase++;
+                    print("  "+currPlayer+" draw/play phase");
                 }
                 break;
+
             case 1:
             //  Draw/Play
             //      +Check for matching cards in hand.
@@ -248,7 +259,7 @@ public class turnActionManager : MonoBehaviour
                             UNOsystem.turnDraw(1, UNOsystem.Player1);
 
                             //Refresh/rebuild hand display
-                            input.refresh_hand_display();
+                            input.refresh_hand_display(UNOsystem.Player1Pos);
 
                             print("  Drew: "+UNOsystem.Player1[UNOsystem.Player1.Count-1]);
                         
@@ -261,8 +272,15 @@ public class turnActionManager : MonoBehaviour
                     }
                     else if(currPlayer == "CPU1")
                     {
-                        print("  CPU turn; skipping until an AI is made.");
+                        //print("  CPU turn; skipping until an AI is made.");
 
+
+                        StartCoroutine(delay());  //NEEDS WORK: Attempt to delay CPU
+                        dumbAILogic();
+                        input.refresh_hand_display(UNOsystem.CPUPos);
+
+
+                        /*
                         //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
                         if (AIdraw && !cardDrawn)
                         {
@@ -274,46 +292,38 @@ public class turnActionManager : MonoBehaviour
                             //Refresh/rebuild hand display
                             //  +Remove current sprites
                             //  +Make new sprites
-                            input.refresh_hand_display();
+                            input.refresh_hand_display(UNOsystem.CPUPos);
 
                             print("  Drew: "+UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
-                        
-                            if(!input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
+
+                            if(input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
+                            {
+                                //AI_play(AIhand, cardName==cardDrawn);
+                                UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
+                                phase = 2;
+                            }
+                            else
                             {
                                 print("  No possible moves");
                                 phase = 2;
                             }
                         }
-                        
-                        /*
-                        //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
-                        if (input.valid(AIselectedCard) && ((!(cardDrawn)) || (AIselectedCard == UNOsystem.CPU1[UNOsystem.CPU1.Count-1])))//Connecting to turnActionManager.cs; Determining whether allowed to play and which cards to play
+
+                        //When an AI plays a card:
+                        //  1. Sends name of card played
+                        //      >AIselectedCard = card played
+                        //  2. Sets AIPlay to true to enable playing the card
+                        if(AIplay && !cardDrawn)
                         {
-                            print("  >Playing "+hit.transform.name);
-                            //Place the card onto the discard pile and remove from hand
-                            GameObject temp = GameObject.Find("UNOGame").GetComponent<UNO>().DiscardPos;
-                            //
-                            hit.transform.parent = temp.transform;
-                            //Move card onto top of discard pile
-                            hit.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y, temp.transform.position.z - .03f * (GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Count + 1));
-                            //Add to the discard pile and remove from player hand
-                            GameObject.Find("UNOGame").GetComponent<UNO>().Player1.Remove(hit.transform.name);
-                            GameObject.Find("UNOGame").GetComponent<UNO>().Discard.Add(hit.transform.name);
-                            hit.transform.GetComponent<Selectable>().playerCard = false;
-                            //
-
-                            // ------ the card play logic goes here ------
-                            //UNOsystem.curColor = hit.transform.name[0];
-                            //playDone = true;
+                            //Make sure to select card before enabling AIplay
+                            //AI_play(AIhand, AISelectedCard);
+                            UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, AIselectedCard);
                             phase = 2;
-
-                            print("This is valid");
                         }
-                        */
-                        else //otherwise, ignore the card click
-                            print("Invalid, select another.");
 
-                        //TEMPORARY
+                        */
+
+                        /*-----TEMPORARY: Skips AI's turn-----*/
                         phase = 2;
                     }
                 }
@@ -322,66 +332,6 @@ public class turnActionManager : MonoBehaviour
                     print("  Finishing turn");
                     phase = 2;
                 }
-                    /*
-                    //Not drawing a card
-                    if (!cardDrawn && input.cardClick)
-                    {
-                        //Attempting to play a card
-                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
-                        {
-                            if(input.valid(hit.transform.name))
-                            {
-                                //play(hit.transform.name, UNOsystem.Player1);
-
-                                phase++;
-                                print("  "+currPlayer+" end phase");
-                            }
-                            else
-                            {
-                                print("Illegal card");
-                            }
-                        }
-                    }
-                    //Drawing a card
-                    else if(cardDrawn)
-                    {
-                        //Check if card that was drawn is playable.
-                        //  +If so, play card. (?)
-                        //  +If not, end turn.
-                        
-                        if ((hit.collider.CompareTag("Card")) && (hit.transform.GetComponent<Selectable>().playerCard == true))
-                        {
-                            if(input.valid(UNOsystem.Player1[UNOsystem.Player1.Count-1]))
-                            {
-                                if(hit.transform.name == UNOsystem.Player1[UNOsystem.Player1.Count-1])
-                                {
-                                    //play(hit.transform.name, UNOsystem.Player1);
-
-                                    print("  "+currPlayer+" plays "+hit.transform.name);
-                                
-                                    phase++;
-                                    print("  "+currPlayer+" end phase");
-                                }
-                            }
-                            else
-                            {
-                                print("  "+UNOsystem.Player1[UNOsystem.Player1.Count-1]+" is not legal to play");
-                                
-                                phase++;
-                                print("  "+currPlayer+" end phase");
-                            }
-                            
-                        }
-                    }
-                    */
-                    /*
-                    else
-                    {
-                        print("No legal moves for "+currPlayer);
-                        phase++;
-                        print("  "+currPlayer+" end phase");
-                    }
-                    */
                 
                 break;
 
@@ -412,7 +362,7 @@ public class turnActionManager : MonoBehaviour
     //void play(RaycastHit2D hit, List<string> hand)
 
     //Move card from hand to discard pile; update display
-    void getRules(string cardName)
+    public void getRules(string cardName)
     {
         //Store special rules of the played card, if any
         switch (cardName[cardName.Length-1])
@@ -475,13 +425,75 @@ public class turnActionManager : MonoBehaviour
     }
 
 
-    void consoleDisplay(List<string> hand)
+    void consoleDisplay(List<string> hand, string varName)
     {
-        print(">Cards in hand:");
+        print(">Contents of "+varName+":");
         foreach (string card in hand)
         {
             print("  +"+card);
         }
         return;
     }    
+
+    void dumbAILogic()
+    {
+        List<string> CPUhand = UNOsystem.CPU1;
+        bool valid = true;
+
+        print("CPUHAND IN DUMBAILOGIC");
+        foreach (string card in CPUhand)
+        {
+            print("checking if " + card + " is valid");
+            print(CPUhand.Count);
+            valid = input.valid(card);
+            if(valid)
+            {
+                //print("Made it in if statement");
+                AIplay = true;
+                AIselectedCard = card;
+                AIPlay(card);
+                if(card[0] == ' ')
+                {
+                    UNOsystem.curColor = 'R';
+                }
+                break;
+            }
+        }
+        if(valid == false)
+        {
+            UNOsystem.turnDraw(1, UNOsystem.CPU1);
+        }
+        print("valid is ");
+        print(valid);
+    }
+
+    void AIPlay(string card)
+    {
+        print("CPU >Playing "+card);
+        /*Place the card onto the discard pile and remove from hand*/
+        GameObject discardpile = UNOsystem.DiscardPos;
+        string path = "/CPU1/CPU1/" + card;
+        GameObject cardInHand = GameObject.Find(path);
+        cardInHand.transform.parent = discardpile.transform;
+        cardInHand.transform.GetComponent<Selectable>().faceUp = true;
+        cardInHand.transform.GetComponent<Selectable>().playerCard = false;
+        print("test" + cardInHand.transform.name);
+
+        //Move card onto top of discard pile
+        cardInHand.transform.position = new Vector3(discardpile.transform.position.x, discardpile.transform.position.y, discardpile.transform.position.z - .03f * (UNOsystem.Discard.Count + 1));
+        input.allAudio[1].Play();
+        //Add to the discard pile and remove from player hand
+        UNOsystem.CPU1.Remove(card);
+        UNOsystem.Discard.Add(card);
+
+        getRules(card);
+
+        input.refresh_hand_display(UNOsystem.CPUPos);
+        UNOsystem.curColor=card[0]; //Might need to be changed for the smart AI
+    }
+
+    IEnumerator delay()
+    {
+        yield return new WaitForSeconds(10);
+    }
 }
