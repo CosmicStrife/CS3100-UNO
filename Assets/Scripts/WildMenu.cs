@@ -21,6 +21,7 @@ public class WildMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //THIS BLOCK IS USED TO TEST THE WILD MENU
         //if (Input.GetKeyDown(KeyCode.Escape))
         //{
         //    if (WildMenuIsActive)
@@ -33,6 +34,8 @@ public class WildMenu : MonoBehaviour
         //    }
         //}
 
+        // When a wild card is played (Code from turnActionManager.cs)
+        // the  WildMenuIsActive bool is set to true
         if (WildMenuIsActive)
         {
             Pause();
@@ -44,15 +47,15 @@ public class WildMenu : MonoBehaviour
 
     }
 
+    // Resume exits the Wild Menu
     public void Resume()
     {
         wildMenuUI.SetActive(false);
         Time.timeScale = 1f;
         WildMenuIsActive = false;
-
-
     }
 
+    // Pause activates the Wild Menu
     void Pause()
     {
         wildMenuUI.SetActive(true);
@@ -61,24 +64,28 @@ public class WildMenu : MonoBehaviour
 
     }
 
+    // Code for pick blue color button
     public void BLUE_Button()
     {
         UNOsystem.curColor = 'B';
         Resume();
     }
 
+    // Code for pick green color button
     public void GREEN_Button()
     {
         UNOsystem.curColor = 'G';
         Resume();
     }
-
+    
+    // Code for pick red color button
     public void RED_Button()
     {
         UNOsystem.curColor = 'R';
         Resume();
     }
 
+    // Code for pick yellow color button
     public void YELLOW_Button()
     {
         UNOsystem.curColor = 'Y';

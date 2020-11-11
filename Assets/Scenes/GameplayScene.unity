@@ -157,8 +157,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -288, y: -152.6}
-  m_SizeDelta: {x: 437.76617, y: 648.10754}
+  m_AnchoredPosition: {x: -191, y: -63.24}
+  m_SizeDelta: {x: 311.2553, y: 469.38586}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &19835468
 MonoBehaviour:
@@ -204,7 +204,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 704831988}
-        m_MethodName: GREEN_Botton
+        m_MethodName: GREEN_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1609,7 +1609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &473754270
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1626,8 +1626,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 331}
-  m_SizeDelta: {x: 2650.9932, y: 144.82767}
+  m_AnchoredPosition: {x: -0.000015259, y: 334}
+  m_SizeDelta: {x: 1590.7117, y: 110.68979}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &473754271
 MonoBehaviour:
@@ -1675,8 +1675,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 135.7
-  m_fontSizeBase: 135.7
+  m_fontSize: 83.4
+  m_fontSizeBase: 83.4
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2558,8 +2558,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 288, y: -152.6}
-  m_SizeDelta: {x: 437.76617, y: 648.10754}
+  m_AnchoredPosition: {x: 191, y: -63.26}
+  m_SizeDelta: {x: 311.2591, y: 469.34644}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1119339088
 MonoBehaviour:
@@ -2605,7 +2605,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 704831988}
-        m_MethodName: RED_Botton
+        m_MethodName: RED_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3054,8 +3054,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 866, y: -152.6}
-  m_SizeDelta: {x: 437.76617, y: 648.10754}
+  m_AnchoredPosition: {x: 579, y: -63.221}
+  m_SizeDelta: {x: 311.26276, y: 469.34692}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1503661742
 MonoBehaviour:
@@ -3101,7 +3101,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 704831988}
-        m_MethodName: YELLOW_Botton
+        m_MethodName: YELLOW_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3377,8 +3377,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -861, y: -152.6}
-  m_SizeDelta: {x: 437.76617, y: 648.10754}
+  m_AnchoredPosition: {x: -579, y: -63.202015}
+  m_SizeDelta: {x: 311.2945, y: 469.3849}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1959597314
 MonoBehaviour:
@@ -3424,7 +3424,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 704831988}
-        m_MethodName: BLUE_Botton
+        m_MethodName: BLUE_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
