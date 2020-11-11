@@ -61,25 +61,25 @@ public class WildMenu : MonoBehaviour
 
     }
 
-    public void BLUE_Botton()
+    public void BLUE_Button()
     {
         UNOsystem.curColor = 'B';
         Resume();
     }
 
-    public void GREEN_Botton()
+    public void GREEN_Button()
     {
         UNOsystem.curColor = 'G';
         Resume();
     }
 
-    public void RED_Botton()
+    public void RED_Button()
     {
         UNOsystem.curColor = 'R';
         Resume();
     }
 
-    public void YELLOW_Botton()
+    public void YELLOW_Button()
     {
         UNOsystem.curColor = 'Y';
         Resume();

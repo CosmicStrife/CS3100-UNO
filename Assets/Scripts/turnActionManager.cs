@@ -283,8 +283,9 @@ public class turnActionManager : MonoBehaviour
                             }
                         }
                     }
-                    else if(currPlayer == "CPU1")
+                    else if(currPlayer == "CPU1" && !WMsystem.WildMenuIsActive)
                     {
+
                         //print("  CPU turn; skipping until an AI is made.");
 
 
@@ -390,15 +391,20 @@ public class turnActionManager : MonoBehaviour
                 //orderManager.turnDirection *= (-1);
                 rules.Add("s");//Only two players
                 break;
-            /*
+           
             case 'd'://Wild
                 rules.Add("w");
+                if (currPlayer == "Player1")
+                    WMsystem.WildMenuIsActive = true;
+
                 break;
-            */
+           
             case 'r'://Wild draw four
                 //Wild card rules handled in input.valid()
                 rules.Add("d4");
-                WMsystem.WildMenuIsActive = true;
+
+                if (currPlayer == "Player1")
+                    WMsystem.WildMenuIsActive = true;
                 break;        
             default:
                 break;
