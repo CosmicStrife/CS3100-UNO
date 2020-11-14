@@ -472,11 +472,16 @@ public class turnActionManager : MonoBehaviour
                 AIplay = true;
                 AIselectedCard = card;
                 AIPlay(card);
+                input.CPU_UNO_Check();
+                if(!input.CPUSafe)
+                {
+                    //Trigger UNO to pop up on screen
+                    print("CPU has uno");
+                }
                 if(card[0] == ' ')
                 {
                     UNOsystem.curColor = 'Y';
                     StartCoroutine(colorYellow());
-
                 }
                 break;
             }

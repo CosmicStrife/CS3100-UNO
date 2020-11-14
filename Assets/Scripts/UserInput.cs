@@ -21,6 +21,8 @@ public class UserInput : MonoBehaviour
     public bool discardPileClick;
     public bool UNObuttonClick;
     public bool playerSafe;
+    
+    public bool CPUSafe;
 
     public AudioSource[] allAudio = new AudioSource[3];
 
@@ -40,6 +42,7 @@ public class UserInput : MonoBehaviour
         discardPileClick = false;
         UNObuttonClick = false;
         playerSafe = false;
+        CPUSafe = false;
         // Instantiation of UNO object used for rearranging position of Player1 cards 
         //  +Changed to UNOsystem; modified code to fit.
         //uno = FindObjectOfType<UNO>();
@@ -252,6 +255,12 @@ public class UserInput : MonoBehaviour
             playerSafe = false;
     }
 
+    public void CPU_UNO_Check()
+    {
+        List<string> CPU1_hand = GameObject.Find("UNOGame").GetComponent<UNO>().CPU1;
+        if (CPUSafe == true && CPU1_hand.Count > 1)
+            CPUSafe = false;
+    }
     public void refresh_hand_display(GameObject handPos)
     {
         // Update the position of remaining Player1 cards 
@@ -272,7 +281,6 @@ public class UserInput : MonoBehaviour
             }
             zOffset = zOffset + 0.05f;
         }
-
         return;
     }
 
