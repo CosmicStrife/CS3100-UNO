@@ -8,6 +8,8 @@ public class UNO : MonoBehaviour
 {
     private UserInput input;
     private turnActionManager actionManager;
+    
+    private HardAI HardAI;
 
 
     // Sprite array to hold the png card images
@@ -32,6 +34,7 @@ public class UNO : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        HardAI = FindObjectOfType<HardAI>();
 
         //List<string> CPUCards = CPU1;
         //List<string> Player1Cards = Player1;
@@ -219,6 +222,8 @@ public class UNO : MonoBehaviour
                 newCard.GetComponent<Selectable>().faceUp = false;
                 newCard.GetComponent<Selectable>().playerCard = false;
                 FindObjectOfType<UserInput>().allAudio[2].Play();
+                
+                HardAI.addCard(CPU1[CPU1.Count-1], HardAI.handMem);
             }
         }
 

@@ -55,6 +55,7 @@ public class turnActionManager : MonoBehaviour
     private turnOrderManager orderManager;
 
     //public DumbAI DumbAI;
+    private HardAI HardAI;
 
     //Input stuff
     Vector3 mousePosition;// = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
@@ -118,13 +119,15 @@ public class turnActionManager : MonoBehaviour
         //Connect to Wild Menu
         WMsystem = FindObjectOfType<WildMenu>();
 
+        HardAI = FindObjectOfType<HardAI>();
+
 
         //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
         //orderManager = GetComponent("turnOrderManager");
         //orderManager = FindObjectOfType<turnOrderManager>();
         orderManager = GetComponent<turnOrderManager>();
 
-        currPlayer = getCurrPlayer();
+        currPlayer = "NULL";
         phase = 0;
         UNOcalled = false;
         cardDrawn = false;
@@ -288,9 +291,17 @@ public class turnActionManager : MonoBehaviour
 
                         //print("  CPU turn; skipping until an AI is made.");
 
+                        if(false)
+                        {
+                            StartCoroutine(delay());  //NEEDS WORK: Attempt to delay CPU
+                            dumbAILogic();
+                        }
+                        else
+                        {
+                            StartCoroutine(delay()); 
+                            HardAI.Smart_AI_Logic();
+                        }
 
-                        StartCoroutine(delay());  //NEEDS WORK: Attempt to delay CPU
-                        dumbAILogic();
                         input.refresh_hand_display(UNOsystem.CPUPos);
 
 
@@ -489,7 +500,7 @@ public class turnActionManager : MonoBehaviour
         print(valid);
     }
 
-    void AIPlay(string card)
+    public void AIPlay(string card)
     {
         print("CPU >Playing "+card);
         /*Place the card onto the discard pile and remove from hand*/
@@ -519,28 +530,28 @@ public class turnActionManager : MonoBehaviour
         yield return new WaitForSeconds(10);
     }
 
-    IEnumerator colorBlue()
+    public IEnumerator colorBlue()
     {
         signalBlue.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);
         signalBlue.GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    IEnumerator colorGreen()
+    public IEnumerator colorGreen()
     {
         signalGreen.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);
         signalGreen.GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    IEnumerator colorRed()
+    public IEnumerator colorRed()
     {
         signalRed.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);
         signalRed.GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    IEnumerator colorYellow()
+    public IEnumerator colorYellow()
     {
         signalYellow.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);

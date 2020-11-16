@@ -8,6 +8,8 @@ using System.Linq;
 
 public class UserInput : MonoBehaviour
 {
+    private HardAI HardAI;
+
     //GameObject UNOobject;
     private UNO UNOsystem;
 
@@ -31,6 +33,8 @@ public class UserInput : MonoBehaviour
         UNOsystem = FindObjectOfType<UNO>();
         //actionManager = turnManager.GetComponent<turnActionManager>;
         actionManager = FindObjectOfType<turnActionManager>();
+
+        HardAI = FindObjectOfType<HardAI>();
 
         //TEMPORARY VARIABLES FOR DEMO
         deckClick = false;
@@ -153,6 +157,8 @@ public class UserInput : MonoBehaviour
                             UNOsystem.curColor = hit.transform.name[0];
                             actionManager.getRules(hit.transform.name);
                             actionManager.playDone = true;
+
+                            HardAI.addCard(hit.transform.name, HardAI.discardMem);
                             
                             print("This is valid");
                         }
