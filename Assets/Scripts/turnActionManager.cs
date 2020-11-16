@@ -81,7 +81,7 @@ public class turnActionManager : MonoBehaviour
         //return "temp";
     }
 
-    void turnDrawAM(string player, byte numCards)
+    public void turnDrawAM(string player, byte numCards)
     {
         if(player == "Player1")
         {
@@ -125,7 +125,7 @@ public class turnActionManager : MonoBehaviour
         //orderManager = FindObjectOfType<turnOrderManager>();
         orderManager = GetComponent<turnOrderManager>();
 
-        currPlayer = getCurrPlayer();
+        currPlayer = "NULL";
         phase = 0;
         UNOcalled = false;
         cardDrawn = false;
@@ -525,7 +525,7 @@ public class turnActionManager : MonoBehaviour
 
     IEnumerator delay()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(3);
     }
 
     IEnumerator colorBlue()
@@ -559,6 +559,7 @@ public class turnActionManager : MonoBehaviour
     IEnumerator AIUno()
     {
         signalUNO.GetComponent<SpriteRenderer>().enabled = true;
+        input.CPUSafe = true;
         yield return new WaitForSeconds(1);
         signalUNO.GetComponent<SpriteRenderer>().enabled = false;
     }

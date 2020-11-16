@@ -248,8 +248,11 @@ public class UserInput : MonoBehaviour
             playerSafe = true;
             StartCoroutine(AIUno());
         }
-        else
-            print("Invalid UNO!");
+        else if(GameObject.Find("UNOGame").GetComponent<UNO>().CPU1.Count == 1 && CPUSafe == false)
+        {
+            actionManager.turnDrawAM("CPU1", 2);
+            CPUSafe = false;
+        }
     }
 
     void UNO_Check()
