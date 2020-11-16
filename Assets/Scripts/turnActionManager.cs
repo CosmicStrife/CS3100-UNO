@@ -52,6 +52,8 @@ public class turnActionManager : MonoBehaviour
     //GameObject WildMEnu;
     private WildMenu WMsystem;
 
+    private GameOverMenu GameOverSystem;
+
     private UserInput input;
     private turnOrderManager orderManager;
 
@@ -118,6 +120,8 @@ public class turnActionManager : MonoBehaviour
 
         //Connect to Wild Menu
         WMsystem = FindObjectOfType<WildMenu>();
+
+        GameOverSystem = FindObjectOfType<GameOverMenu>();
 
 
         //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
@@ -283,6 +287,8 @@ public class turnActionManager : MonoBehaviour
                                 phase = 2;
                             }
                         }
+
+
                     }
                     else if(currPlayer == "CPU1" && !WMsystem.WildMenuIsActive)
                     {
@@ -354,6 +360,9 @@ public class turnActionManager : MonoBehaviour
             //  End
             //      +Send signal to turnOrderManager
                 print("END PHASE");
+
+                if (UNOsystem.Player1.Count == 0)
+                    GameOverSystem.ExitMenuIsActive = true;
 
                 playAllowed = false;
                 playDone = false;
@@ -461,10 +470,8 @@ public class turnActionManager : MonoBehaviour
         List<string> CPUhand = UNOsystem.CPU1;
         bool valid = true;
 
-        print("CPUHAND IN DUMBAILOGIC");
         foreach (string card in CPUhand)
         {
-            print("checking if " + card + " is valid");
             print(CPUhand.Count);
             valid = input.valid(card);
             if(valid)
@@ -494,8 +501,9 @@ public class turnActionManager : MonoBehaviour
         {
             UNOsystem.turnDraw(1, UNOsystem.CPU1);
         }
-        print("valid is ");
-        print(valid);
+
+        if (CPUhand.Count == 0)
+            GameOverSystem.ExitMenuIsActive = true;
     }
 
     void AIPlay(string card)
