@@ -10,6 +10,7 @@ public class turnActionManager : MonoBehaviour
     public GameObject signalGreen;
     public GameObject signalRed;
     public GameObject signalYellow;
+    public GameObject signalUNO;
 
     /*---Variables---*/
     //Storees current player
@@ -473,10 +474,11 @@ public class turnActionManager : MonoBehaviour
                 AIselectedCard = card;
                 AIPlay(card);
                 input.CPU_UNO_Check();
-                if(!input.CPUSafe)
+                if(CPUhand.Count == 1)
                 {
                     //Trigger UNO to pop up on screen
-                    print("CPU has uno");
+                    StartCoroutine(AIUno());
+                    //print("CPU has uno");
                 }
                 if(card[0] == ' ')
                 {
@@ -484,9 +486,11 @@ public class turnActionManager : MonoBehaviour
                     StartCoroutine(colorYellow());
                 }
                 break;
+                
             }
         }
-        if(valid == false)
+        
+        if (valid == false)
         {
             UNOsystem.turnDraw(1, UNOsystem.CPU1);
         }
@@ -550,5 +554,12 @@ public class turnActionManager : MonoBehaviour
         signalYellow.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);
         signalYellow.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    IEnumerator AIUno()
+    {
+        signalUNO.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(1);
+        signalUNO.GetComponent<SpriteRenderer>().enabled = false;
     }
 }

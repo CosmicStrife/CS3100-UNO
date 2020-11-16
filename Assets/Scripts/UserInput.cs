@@ -14,6 +14,9 @@ public class UserInput : MonoBehaviour
     //GameObject turnManager;
     private turnActionManager actionManager;
 
+    //GameObject to display UNO for user
+    public GameObject signalUNO;
+
     //TEMPORARY VARIABLES FOR DEMO
     public bool deckClick;
     public bool cardClick;
@@ -241,8 +244,9 @@ public class UserInput : MonoBehaviour
         List<string> player_hand = GameObject.Find("UNOGame").GetComponent<UNO>().Player1;
         if (player_hand.Count == 1)
         {
-            print("Valid UNO!");
+            //print("Valid UNO!");
             playerSafe = true;
+            StartCoroutine(AIUno());
         }
         else
             print("Invalid UNO!");
@@ -255,12 +259,20 @@ public class UserInput : MonoBehaviour
             playerSafe = false;
     }
 
+    IEnumerator AIUno()
+    {
+        signalUNO.GetComponent<SpriteRenderer>().enabled = true;
+        yield return new WaitForSeconds(1);
+        signalUNO.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
     public void CPU_UNO_Check()
     {
         List<string> CPU1_hand = GameObject.Find("UNOGame").GetComponent<UNO>().CPU1;
         if (CPUSafe == true && CPU1_hand.Count > 1)
             CPUSafe = false;
     }
+
     public void refresh_hand_display(GameObject handPos)
     {
         // Update the position of remaining Player1 cards 
