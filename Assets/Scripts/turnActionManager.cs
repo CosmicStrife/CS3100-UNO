@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System;
+using TMPro;
 
 public class turnActionManager : MonoBehaviour
 {
@@ -56,6 +57,8 @@ public class turnActionManager : MonoBehaviour
 
     private UserInput input;
     private turnOrderManager orderManager;
+
+    public GameObject winText;
 
     //public DumbAI DumbAI;
 
@@ -121,8 +124,8 @@ public class turnActionManager : MonoBehaviour
         //Connect to Wild Menu
         WMsystem = FindObjectOfType<WildMenu>();
 
+        //For game being declared over
         GameOverSystem = FindObjectOfType<GameOverMenu>();
-
 
         //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
         //orderManager = GetComponent("turnOrderManager");
@@ -362,7 +365,11 @@ public class turnActionManager : MonoBehaviour
                 print("END PHASE");
 
                 if (UNOsystem.Player1.Count == 0)
+                {
+                    winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Win!";
                     GameOverSystem.ExitMenuIsActive = true;
+
+                }
 
                 playAllowed = false;
                 playDone = false;
@@ -503,7 +510,10 @@ public class turnActionManager : MonoBehaviour
         }
 
         if (CPUhand.Count == 0)
+        {
+            winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Lose!";
             GameOverSystem.ExitMenuIsActive = true;
+        }
     }
 
     void AIPlay(string card)
