@@ -34,10 +34,10 @@ public class HardAI : MonoBehaviour
     List<double> played_color_weights;
     List<double> played_symbol_weights;
 
-    List<sbyte> hand_color_signs;
-    List<sbyte> hand_symbol_signs;
-    List<sbyte> played_color_signs;
-    List<sbyte> played_symbol_signs;
+    List<double> hand_color_shifts;
+    List<double> hand_symbol_shifts;
+    List<double> played_color_shifts;
+    List<double> played_symbol_shifts;
 
     //handMem[Player][Color][Symbol]
     /*
@@ -51,7 +51,7 @@ public class HardAI : MonoBehaviour
         UNOsystem = FindObjectOfType<UNO>();
         actionManager = FindObjectOfType<turnActionManager>();
         input = FindObjectOfType<UserInput>();
-        //handMem = ;
+        
         maxQuants = new List<List<byte>>()
         {
             new List<byte>() {2,4,4,4,4,4,4,4,4,4,2,2,2,0,0},
@@ -60,6 +60,7 @@ public class HardAI : MonoBehaviour
             new List<byte>() {2,4,4,4,4,4,4,4,4,4,2,2,2,0,0},
             new List<byte>() {0,0,0,0,0,0,0,0,0,0,0,0,0,4,4}
         };
+
         handMem = new List<List<byte>>()
         {
             new List<byte>() {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -72,6 +73,7 @@ public class HardAI : MonoBehaviour
         {
             addCard(card, handMem);
         }
+
         discardMem = new List<List<byte>>()
         {
             new List<byte>() {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -86,10 +88,10 @@ public class HardAI : MonoBehaviour
         played_color_weights = new List<double>() {0.9, 0.9, 0.9};
         played_symbol_weights = new List<double>() {0.9, 0.9, 0.9};
 
-        hand_color_signs = new List<sbyte>() {-1, -1, -1};
-        hand_symbol_signs = new List<sbyte>() {-1, -1, -1};
-        played_color_signs = new List<sbyte>() {-1, -1, -1};
-        played_symbol_signs = new List<sbyte>() {-1, -1, -1};
+        hand_color_shifts = new List<double>() {0, 0, 0};
+        hand_symbol_shifts = new List<double>() {0, 0, 0};
+        played_color_shifts = new List<double>() {0, 0, 0};
+        played_symbol_shifts = new List<double>() {0, 0, 0};
     }
 
     // Update is called once per frame
@@ -400,13 +402,13 @@ public class HardAI : MonoBehaviour
     }
 
     //  +IMPORTANT: input_value should be a PROPORTION of the quantity divided by the total cards with the corresponding quality
-    double Processing_function_pt1(double input_value, List<sbyte> signs, List<double> weights)
+    double Processing_function_pt1(double input_value, List<double> shifts, List<double> weights)
     {
         double score = 0;
     
         for (byte i = 0; i < weights.Count; i++)
         {
-            score += (input_value * /*Convert.ToDouble*/(signs[i]) * Math.Abs(Math.Pow(weights[i],(i+1))));
+            score += (weights[i] * Math.Abs(Math.Pow((input_value-shifts[i]),i)));
         }
 
         return score;
@@ -418,11 +420,11 @@ public class HardAI : MonoBehaviour
     {
         double score = 0;
 
-        score += Processing_function_pt1(hand_color_quantity, hand_color_signs, hand_color_weights);
-        score += Processing_function_pt1(hand_symbol_quantity, hand_symbol_signs, hand_symbol_weights);
+        score += Processing_function_pt1(hand_color_quantity, hand_color_shifts, hand_color_weights);
+        score += Processing_function_pt1(hand_symbol_quantity, hand_symbol_shifts, hand_symbol_weights);
         
-        score += Processing_function_pt1(played_color_quantity, played_color_signs, played_color_weights);
-        score += Processing_function_pt1(played_symbol_quantitiy, played_symbol_signs, played_symbol_weights);
+        score += Processing_function_pt1(played_color_quantity, played_color_shifts, played_color_weights);
+        score += Processing_function_pt1(played_symbol_quantitiy, played_symbol_shifts, played_symbol_weights);
     
         return score;
     }
@@ -511,9 +513,11 @@ public class HardAI : MonoBehaviour
             }
             else//No cards (including wild) can be payed
             {
+                print("  No card found; drawing");
                 UNOsystem.turnDraw(1, UNOsystem.CPU1);
                 if(input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
                 {
+                    print("Playing drawn card");
                     HardAIplay(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
                 }
             }
