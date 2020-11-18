@@ -105,7 +105,7 @@ public class UNO : MonoBehaviour
     }
 
     // Shuffle the deck with a simple algorithm
-    void Shuffle<T>(List<T> list)
+    public void Shuffle<T>(List<T> list)
     {
         System.Random random = new System.Random();
         int n = list.Count;

@@ -507,7 +507,7 @@ public class HardAI : MonoBehaviour
             {
                 HardAIplay(" Wild Draw Four");
             }
-            else if (handMem[4][14] > 0)
+            else if (handMem[4][13] > 0)
             {
                 HardAIplay(" Wild");
             }
@@ -533,6 +533,8 @@ public class HardAI : MonoBehaviour
             //Trigger UNO to pop up on screen
             StartCoroutine(actionManager.AIUno());
         }
+
+        actionManager.AI_winCheck();
         return;
     }
 

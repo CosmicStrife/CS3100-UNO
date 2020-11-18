@@ -404,13 +404,21 @@ public class turnActionManager : MonoBehaviour
                 AIplay = true;
                 AIselectedCard = card;
                 AIPlay(card);
-                input.CPU_UNO_Check();
-                if(CPUhand.Count == 1)
+
+                UnityEngine.Random random = new UnityEngine.Random();
+                int number = UnityEngine.Random.Range(1,255);
+                if((number%2) == 1)
                 {
-                    //Trigger UNO to pop up on screen
-                    StartCoroutine(AIUno());
-                    //print("CPU has uno");
+                    input.CPU_UNO_Check();
+                    if(CPUhand.Count == 1)
+                    {
+                        //Trigger UNO to pop up on screen
+                        StartCoroutine(AIUno());
+                        //print("CPU has uno");
+                    }
                 }
+                
+
                 if(card[0] == ' ')
                 {
                     UNOsystem.curColor = 'Y';
@@ -447,11 +455,24 @@ public class turnActionManager : MonoBehaviour
             }
         }
 
+        AI_winCheck();
+        /*
         if (CPUhand.Count == 0)
         {
             winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Lose!";
             GameOverSystem.ExitMenuIsActive = true;
         }
+        */
+    }
+
+    public void AI_winCheck()
+    {
+        if (UNOsystem.CPU1.Count == 0)
+        {
+            winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Lose!";
+            GameOverSystem.ExitMenuIsActive = true;
+        }
+        return;
     }
 
     public void AIPlay(string card)
