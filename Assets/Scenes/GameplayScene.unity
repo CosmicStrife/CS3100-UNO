@@ -678,7 +678,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 636334018}
-        m_MethodName: MENU_ACTION_GotoPage
+        m_MethodName: MENU_ACTION_GotoPage_EASY
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
