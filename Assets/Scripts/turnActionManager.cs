@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System;
+using TMPro;
 
 public class turnActionManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class turnActionManager : MonoBehaviour
     public GameObject signalGreen;
     public GameObject signalRed;
     public GameObject signalYellow;
+    public GameObject signalUNO;
 
     /*---Variables---*/
     //Storees current player
@@ -51,8 +53,12 @@ public class turnActionManager : MonoBehaviour
     //GameObject WildMEnu;
     private WildMenu WMsystem;
 
+    private GameOverMenu GameOverSystem;
+
     private UserInput input;
     private turnOrderManager orderManager;
+
+    public GameObject winText;
 
     //public DumbAI DumbAI;
     private HardAI HardAI;
@@ -81,7 +87,7 @@ public class turnActionManager : MonoBehaviour
         //return "temp";
     }
 
-    void turnDrawAM(string player, byte numCards)
+    public void turnDrawAM(string player, byte numCards)
     {
         if(player == "Player1")
         {
@@ -121,6 +127,8 @@ public class turnActionManager : MonoBehaviour
 
         HardAI = FindObjectOfType<HardAI>();
 
+        //For game being declared over
+        GameOverSystem = FindObjectOfType<GameOverMenu>();
 
         //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
         //orderManager = GetComponent("turnOrderManager");
@@ -285,6 +293,8 @@ public class turnActionManager : MonoBehaviour
                                 phase = 2;
                             }
                         }
+
+
                     }
                     else if(currPlayer == "CPU1" && !WMsystem.WildMenuIsActive)
                     {
@@ -364,6 +374,13 @@ public class turnActionManager : MonoBehaviour
             //  End
             //      +Send signal to turnOrderManager
                 print("END PHASE");
+
+                if (UNOsystem.Player1.Count == 0)
+                {
+                    winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Win!";
+                    GameOverSystem.ExitMenuIsActive = true;
+
+                }
 
                 playAllowed = false;
                 playDone = false;
@@ -471,10 +488,8 @@ public class turnActionManager : MonoBehaviour
         List<string> CPUhand = UNOsystem.CPU1;
         bool valid = true;
 
-        print("CPUHAND IN DUMBAILOGIC");
         foreach (string card in CPUhand)
         {
-            print("checking if " + card + " is valid");
             print(CPUhand.Count);
             valid = input.valid(card);
             if(valid)
@@ -483,21 +498,33 @@ public class turnActionManager : MonoBehaviour
                 AIplay = true;
                 AIselectedCard = card;
                 AIPlay(card);
+                input.CPU_UNO_Check();
+                if(CPUhand.Count == 1)
+                {
+                    //Trigger UNO to pop up on screen
+                    StartCoroutine(AIUno());
+                    //print("CPU has uno");
+                }
                 if(card[0] == ' ')
                 {
                     UNOsystem.curColor = 'Y';
                     StartCoroutine(colorYellow());
-
                 }
                 break;
+                
             }
         }
-        if(valid == false)
+        
+        if (valid == false)
         {
             UNOsystem.turnDraw(1, UNOsystem.CPU1);
         }
-        print("valid is ");
-        print(valid);
+
+        if (CPUhand.Count == 0)
+        {
+            winText.GetComponent<TextMeshProUGUI>().text = "Game Over! You Lose!";
+            GameOverSystem.ExitMenuIsActive = true;
+        }
     }
 
     public void AIPlay(string card)
@@ -527,7 +554,7 @@ public class turnActionManager : MonoBehaviour
 
     IEnumerator delay()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(3);
     }
 
     public IEnumerator colorBlue()
@@ -556,5 +583,13 @@ public class turnActionManager : MonoBehaviour
         signalYellow.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(3);
         signalYellow.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    IEnumerator AIUno()
+    {
+        signalUNO.GetComponent<SpriteRenderer>().enabled = true;
+        input.CPUSafe = true;
+        yield return new WaitForSeconds(1);
+        signalUNO.GetComponent<SpriteRenderer>().enabled = false;
     }
 }
