@@ -526,7 +526,13 @@ public class HardAI : MonoBehaviour
         {
             HardAIplay(card_name(temp[0], temp[1]));
         }
-        
+
+        input.CPU_UNO_Check();
+        if (UNOsystem.CPU1.Count == 1)
+        {
+            //Trigger UNO to pop up on screen
+            StartCoroutine(actionManager.AIUno());
+        }
         return;
     }
 

@@ -55,6 +55,8 @@ public class turnActionManager : MonoBehaviour
 
     private GameOverMenu GameOverSystem;
 
+    private Navigation nav;
+
     private UserInput input;
     private turnOrderManager orderManager;
 
@@ -67,12 +69,6 @@ public class turnActionManager : MonoBehaviour
     Vector3 mousePosition;// = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
     RaycastHit2D hit;// = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-    // Game objects for cardPrefab, CPU and Player1 hand place holders 
-    //public GameObject cardPrefab;
-    //public GameObject CPUPos;
-    //public GameObject Player1Pos;
-    //public GameObject DiscardPos;
-
 
     /*----------------------------------------------------------------------------------------------------------------------*/
 
@@ -80,11 +76,7 @@ public class turnActionManager : MonoBehaviour
     //  If new player, send signal that change has been recieved
     public string getCurrPlayer()
     {
-        //return orderManager.turnOrder[0];
-        //return orderManager.turnOrder.First();
-        //print(orderManager.turnOrder[0]);
         return orderManager.turnOrder[0];
-        //return "temp";
     }
 
     public void turnDrawAM(string player, byte numCards)
@@ -127,12 +119,11 @@ public class turnActionManager : MonoBehaviour
 
         HardAI = FindObjectOfType<HardAI>();
 
+        nav = FindObjectOfType<Navigation>();
+
         //For game being declared over
         GameOverSystem = FindObjectOfType<GameOverMenu>();
 
-        //orderManager = Gameobject.Find("turnManager").GetComponent("turnOrderManager");
-        //orderManager = GetComponent("turnOrderManager");
-        //orderManager = FindObjectOfType<turnOrderManager>();
         orderManager = GetComponent<turnOrderManager>();
 
         currPlayer = "NULL";
@@ -218,18 +209,7 @@ public class turnActionManager : MonoBehaviour
             //      +Process special actions
             //      +Reset tracking variables
 
-                //Display for testing
 
-
-                
-                /*
-                if(currPlayer == "Player1")
-                {
-                    consoleDisplay(UNOsystem.Player1, "Player1");
-                }
-                else
-                    consoleDisplay(UNOsystem.CPU1, "CPU1");
-                */
 
                 //Special Actions
                 consoleDisplay(rules, "current rules");
@@ -300,8 +280,9 @@ public class turnActionManager : MonoBehaviour
                     {
 
                         //print("  CPU turn; skipping until an AI is made.");
-
-                        if(false)
+                        print("The AI set is");
+                        
+                        if(nav.getAI())
                         {
                             StartCoroutine(delay());  //NEEDS WORK: Attempt to delay CPU
                             dumbAILogic();
@@ -313,50 +294,6 @@ public class turnActionManager : MonoBehaviour
                         }
 
                         input.refresh_hand_display(UNOsystem.CPUPos);
-
-
-                        /*
-                        //NON-FUNCTIONAL; based off code that relies on UserInput for changing the game.
-                        if (AIdraw && !cardDrawn)
-                        {
-                            cardDrawn = true;
-                            
-                            //Move card from deck to hand
-                            UNOsystem.turnDraw(1, UNOsystem.CPU1);
-
-                            //Refresh/rebuild hand display
-                            //  +Remove current sprites
-                            //  +Make new sprites
-                            input.refresh_hand_display(UNOsystem.CPUPos);
-
-                            print("  Drew: "+UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
-
-                            if(input.valid(UNOsystem.CPU1[UNOsystem.CPU1.Count-1]))
-                            {
-                                //AI_play(AIhand, cardName==cardDrawn);
-                                UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, UNOsystem.CPU1[UNOsystem.CPU1.Count-1]);
-                                phase = 2;
-                            }
-                            else
-                            {
-                                print("  No possible moves");
-                                phase = 2;
-                            }
-                        }
-
-                        //When an AI plays a card:
-                        //  1. Sends name of card played
-                        //      >AIselectedCard = card played
-                        //  2. Sets AIPlay to true to enable playing the card
-                        if(AIplay && !cardDrawn)
-                        {
-                            //Make sure to select card before enabling AIplay
-                            //AI_play(AIhand, AISelectedCard);
-                            UNOsystem.playFromHand(UNOsystem.CPUPos, UNOsystem.CPU1, AIselectedCard);
-                            phase = 2;
-                        }
-
-                        */
 
                         /*-----TEMPORARY: Skips AI's turn-----*/
                         phase = 2;
@@ -437,38 +374,7 @@ public class turnActionManager : MonoBehaviour
             default:
                 break;
         }
-/*
-        //Alter hand data
 
-        //Alter discard pile
-
-        //Store special rules of the played card, if any
-        switch (cardName[cardName.Length-1])
-        {
-            case 'o'://Draw two
-                rules.Add("d2");
-                break;
-            case 'p'://Skip
-                rules.Add("s");
-                break;
-            case 'e'://Reverse
-                //orderManager.turnDirection *= (-1);
-                rules.Add("s");//Only two players
-                break;
-            
-            //case 'd'://Wild
-            //    rules.Add("w");
-            //    break;
-            case 'r'://Wild draw four
-                //Wild card rules handled in input.valid()
-                rules.Add("d4");
-                break;        
-            default:
-                break;
-        }
-
-        //Rebuild/refresh hand display
-*/
         return;
     }
 
@@ -518,6 +424,27 @@ public class turnActionManager : MonoBehaviour
         if (valid == false)
         {
             UNOsystem.turnDraw(1, UNOsystem.CPU1);
+
+            string possibleCard = CPUhand[CPUhand.Count - 1];
+
+            if (input.valid(possibleCard))
+            {
+                print("Playing drawn card");
+                AIPlay(possibleCard);
+                /*
+                input.CPU_UNO_Check();
+                if (CPUhand.Count == 1)
+                {
+                    //Trigger UNO to pop up on screen
+                    StartCoroutine(AIUno());
+                }
+                */
+                if (possibleCard[0] == ' ')
+                {
+                    UNOsystem.curColor = 'Y';
+                    StartCoroutine(colorYellow());
+                }
+            }
         }
 
         if (CPUhand.Count == 0)
@@ -585,7 +512,7 @@ public class turnActionManager : MonoBehaviour
         signalYellow.GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    IEnumerator AIUno()
+    public IEnumerator AIUno()
     {
         signalUNO.GetComponent<SpriteRenderer>().enabled = true;
         input.CPUSafe = true;

@@ -63,7 +63,7 @@ public class turnOrderManager : MonoBehaviour
         turnOrder = new List<string>(players);
 
         //Create turn order
-        Shuffle(turnOrder);//? Randomizing function for lists; should work for this, right?
+        //Shuffle(turnOrder);//? Randomizing function for lists; should work for this, right?
         
         
         foreach (string player in turnOrder)
